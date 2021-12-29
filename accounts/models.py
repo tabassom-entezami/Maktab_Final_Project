@@ -11,6 +11,12 @@ class Customer(CustomUser):
     customeraddress_id=models.ManyToManyField("CustomerAdress",related_name='customer_address')
     class Meta:
         verbose_name="customer"
+
+    def save(self,*args, **kwargs):
+        if not self.id:
+            self.is_staff = False
+            self.is_superuser = False
+        return super(Manager,self).save(*args,**kwargs)
     
 
 class CustomerAdress(models.Model):
@@ -25,11 +31,24 @@ class Manager(CustomUser):
         proxy=True
         verbose_name="resturant manager"
 
+    def save(self,*args, **kwargs):
+        if not self.id:
+            self.is_staff = True
+            self.is_superuser = False
+        return super(Manager,self).save(*args,**kwargs)
+
 class Admin(CustomUser):
     class Meta:
         proxy=True
         verbose_name="superuser"
-        verbose_name_plural = 'superusers'
+        
+    def save(self,*args, **kwargs):
+        if not self.id:
+            self.is_staff = True
+            self.is_superuser = True
+        return super(Manager,self).save(*args,**kwargs)
+
+    
 
 
  
