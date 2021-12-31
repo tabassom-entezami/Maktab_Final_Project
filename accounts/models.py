@@ -20,11 +20,20 @@ class Customer(CustomUser):
     
 
 class CustomerAdress(models.Model):
+    class Meta:
+        ordering = ['pk']
+            
+
     city = models.CharField(max_length=10)
     street = models.CharField(max_length=10)
     plaque = models.CharField(max_length=10)
 
-
+    @staticmethod
+    def has_default(customer):
+        for address in CustomerAdress.objects.filter(customer=customer):
+            if address.default is True:
+                return True
+        return False
 
 class Manager(CustomUser):
     class Meta:
@@ -44,7 +53,7 @@ class Admin(CustomUser):
         
     def save(self,*args, **kwargs):
         if not self.id:
-            self.is_staff = True
+            # self.is_staff = True
             self.is_superuser = True
         return super(Manager,self).save(*args,**kwargs)
 

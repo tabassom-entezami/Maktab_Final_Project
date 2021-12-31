@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'accounts',
     'resturant',
     'multiselectfield',
-
+    'allauth.socialaccount',
 ]
 
 AUTH_USER_MODEL = 'accounts.CustomUser'

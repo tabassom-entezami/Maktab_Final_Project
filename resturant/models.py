@@ -36,15 +36,15 @@ class Branch(Resturant):
     def __str__(self) :
         return f"{self.name} "
 
-class Menu(models.Model):
-    branch_id=models.OneToOneField(Branch,on_delete=models.CASCADE,related_name="branch")
-    #اگه برنچ پاک شه منوش هم که مختص به خودشه پاک میشه
-    # foodmenu_id=models.ManyToManyField("FoodMenu",related_name='foodmenu_id')
-    # price=models.IntegerField(null=False, blank=False)
-    # quantity=models.IntegerField(null=False, blank=False)
+# class Menu(models.Model):
+#     branch_id=models.OneToOneField(Branch,on_delete=models.CASCADE,related_name="branch")
+#     #اگه برنچ پاک شه منوش هم که مختص به خودشه پاک میشه
+#     # foodmenu_id=models.ManyToManyField("FoodMenu",related_name='foodmenu_id')
+#     # price=models.IntegerField(null=False, blank=False)
+#     # quantity=models.IntegerField(null=False, blank=False)
 
-    def __str__(self) -> str:
-        return f'{self.branch_id}'
+#     def __str__(self) -> str:
+#         return f'{self.branch_id}'
 
 
 class Food(models.Model):
@@ -54,19 +54,21 @@ class Food(models.Model):
     create_date=models.DateTimeField(auto_now_add=True)
     foodcategory_id=models.ForeignKey("Category",on_delete=models.PROTECT,related_name="food_category")
     # کتگوری نداریم پس نباید پاک شن غذای بدون 
-    menu_id = models.ManyToManyField('Menu',through="FoodMenu",related_name='food_menu')
+    # menu_id = models.ManyToManyField('Menu',through="FoodMenu",related_name='food_menu')
     meal_id = models.ManyToManyField("Meal",related_name="meal")
-
+    branch_id = models.ManyToManyField(Branch,through='FoodMenu',related_name='food_menu')
     def __str__(self) :
         return self.name
 
 class FoodMenu(models.Model):
     food_id = models.ForeignKey("Food", on_delete=models.PROTECT ,related_name="food")
     # که غذا تا زمانی که توی منویی هست نشه پاک شه
-    menu_id = models.ForeignKey("Menu",on_delete=models.CASCADE,related_name="menu")
-    #فودمنو هم پاک شه منو میتونه توسط شخص پاک شه 
+    # menu_id = models.ForeignKey("Menu",on_delete=models.CASCADE,related_name="menu")
+    branch_id = models.ForeignKey("Branch",on_delete=models.CASCADE,related_name="branch_id")
+    #ه قود پاک شه حتما باید منوش هم بره
     price = models.IntegerField()
     number = models.IntegerField()
+    
 
     def __str__(self) :
         return f"""{self.food_id} + "foodmenu" """
@@ -74,7 +76,7 @@ class FoodMenu(models.Model):
 class OrderItem(models.Model):
     order_id = models.ForeignKey('Order', on_delete=models.CASCADE ,related_name='order')
     #اگه اوردر ایتم حذف شه اوردر هم حذف میشه
-    food_menu_id = models.ForeignKey(FoodMenu, on_delete=models.CASCADE, related_name='foodmenu')
+    food_menu_id = models.ForeignKey(FoodMenu, on_delete=models.SET_NULL,null=True, related_name='foodmenu')
     #اگه فود منو
     number = models.IntegerField()
     # total_price = models.IntegerField()
@@ -116,7 +118,7 @@ class Order(models.Model):
     status=models.CharField(max_length=8, choices=ORDER_STATUS, default='Order')
     created_date=models.DateTimeField(auto_now_add=True)
     customeraddress_id=models.OneToOneField(CustomerAdress,on_delete=models.CASCADE)
-    order_item_id = models.ManyToManyField(OrderItem, verbose_name="order_item",related_name="order_item_id")
-
+    # order_item_id = models.ManyToManyField(OrderItem, verbose_name="order_item",related_name="order_item_id")
+    foodmenu_id=models.ManyToManyField(FoodMenu,through=OrderItem,related_name='food')
     def __str__(self) :
         return self.status

@@ -9,7 +9,12 @@ from django.http import JsonResponse
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 
-def home_page(re):
+from django.contrib.auth.decorators import login_required
 
-    return render(re,"Home.html")
+
+@login_required
+def home_page(re):
+    return render(re, "Home.html")
 # Create your views here.
+
+
