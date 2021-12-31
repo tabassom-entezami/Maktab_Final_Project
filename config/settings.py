@@ -46,10 +46,12 @@ INSTALLED_APPS = [
     'multiselectfield',
     'allauth.socialaccount',
 ]
-
+ACCOUNT_FORMS = {
+    "signup": "accounts.forms.CostumRegisterForm",
+}
 AUTH_USER_MODEL = 'accounts.CustomUser'
-LOGIN_REDIRECT_URL = 'home'
-ACCOUNT_LOGOUT_REDIRECT = 'home'
+LOGIN_REDIRECT_URL = 'Home'
+ACCOUNT_LOGOUT_REDIRECT = 'Home'
 
 SITE_ID = 1
 AUTHENTICATION_BACKENDS = (

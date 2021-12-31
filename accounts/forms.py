@@ -1,4 +1,6 @@
 from django import forms 
+from allauth.account.forms import SignupForm
+from django.forms import ModelForm
 from django.contrib.auth.forms import UserChangeForm,UserCreationForm 
 from django.forms import fields 
 from .models import * 
@@ -17,3 +19,4 @@ class CostumRegisterForm(forms.ModelForm):
         if commit: 
             user.save() 
         return user
+

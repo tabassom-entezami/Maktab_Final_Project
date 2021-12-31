@@ -98,13 +98,14 @@ class Category(models.Model):
         return self.type
 
 class Meal(models.Model):
-    MEAL_CHOICES=(
-        ('dinner','dinner'),
-        ("breakfast",'breakfast'),
-        ("lunch","lunch")
+    # MEAL_CHOICES=(
+    #     ('dinner','dinner'),
+    #     ("breakfast",'breakfast'),
+    #     ("lunch","lunch")
 
-    )
-    
+    # )
+    name=models.CharField(max_length=30)
+    food_id=models.ManyToManyField(Food,related_name='food_meal')
     # name = models.MultipleChoiceField(choices = MEAL_CHOICES)
     # food_id=models.ManyToManyField(Food,related_name='food_meal')
 
