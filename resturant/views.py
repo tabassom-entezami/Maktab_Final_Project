@@ -12,7 +12,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.decorators import login_required
 
 
-@login_required
+# @login_required
 def home_page(re):
     return render(re, "Home.html")
 # Create your views here.
