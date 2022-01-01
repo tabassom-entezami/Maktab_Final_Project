@@ -9,14 +9,15 @@ class CustomUser(AbstractUser):
 
 class Customer(CustomUser):
     customeraddress_id=models.ManyToManyField("CustomerAdress",related_name='customer_address')
+    device = models.CharField(max_length=200, null=True, blank=True)
     class Meta:
         verbose_name="customer"
 
-    def save(self,*args, **kwargs):
-        if not self.id:
-            self.is_staff = False
-            self.is_superuser = False
-        return super(Manager,self).save(*args,**kwargs)
+    # def save(self,*args, **kwargs):
+    #     if not self.id:
+    #         self.is_staff = False
+    #         self.is_superuser = False
+    #     return super(Manager,self).save(*args,**kwargs)
     
 
 class CustomerAdress(models.Model):
@@ -30,7 +31,7 @@ class CustomerAdress(models.Model):
 
     @staticmethod
     def has_default(customer):
-        for address in CustomerAdress.objects.filter(customer=customer):
+        for address in CustomerAdress.objects.filter(customer_id=customer):
             if address.default is True:
                 return True
         return False

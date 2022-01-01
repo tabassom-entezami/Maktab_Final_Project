@@ -3,6 +3,7 @@ from django.db import models
 from django.db.models.deletion import CASCADE, SET_NULL , PROTECT
 from accounts.models import Manager,CustomerAdress
 # from multiselectfield import MultiSelectField
+from accounts.models import *
 import jdatetime
 
     
@@ -121,12 +122,13 @@ class Order(models.Model):
         
     )
     # order_count=models.IntegerField()
+    customer_id = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
     food_menu_id = models.ManyToManyField(FoodMenu)
-    total_price=models.IntegerField()
+    total_price=models.IntegerField(null=True)
     delivery_time=models.DateTimeField(auto_now=True)
     status=models.CharField(max_length=8, choices=ORDER_STATUS, default='Order')
     created_date=models.DateTimeField(auto_now_add=True)
-    customeraddress_id=models.OneToOneField(CustomerAdress,on_delete=models.CASCADE)
+    customeraddress_id=models.OneToOneField(CustomerAdress,on_delete=models.CASCADE,null=True,related_name="custumer_address")
     # order_item_id = models.ManyToManyField(OrderItem, verbose_name="order_item",related_name="order_item_id")
     foodmenu_id=models.ManyToManyField(FoodMenu,through=OrderItem,related_name='food')
 
