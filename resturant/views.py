@@ -20,16 +20,19 @@ def home_page(re):
 
 
 
-def store(request):
+def resturant(request):
 	products = FoodMenu.objects.all()
-	context = {'products':products}
+	food = Food.objects.all()
+	
+	context = {'products':products,"food":food}
 	return render(request, 'resturant.html', context)
 
 def product(request, pk):
 	product = FoodMenu.objects.get(id=pk)
-
+	food = Food.objects.get(id=pk)
 	if request.method == 'POST':
 		product = FoodMenu.objects.get(id=pk)
+		
 		#Get user account information
 		try:
 			customer = request.user.customer
@@ -38,23 +41,25 @@ def product(request, pk):
 			customer, created = Customer.objects.get_or_create(device=device)
 
 		order, created = Order.objects.get_or_create(customer_id=customer, status="Order")
-		orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+		orderItem, created = OrderItem.objects.get_or_create(order_id=order, food_menu_id=product)
 		orderItem.number =request.POST['number']
 		orderItem.save()
 
 		return redirect('cart')
 
-	context = {'product':product}
+	context = {'product':product, "food":food }
 	return render(request, 'product.html', context)
 
 def cart(request):
+	orderitems=OrderItem.objects.filter(order_id__isnull=False)
+	food = Food.objects.filter(food__foodmenu__order_id__isnull=False)
 	try:
 		customer = request.user.customer
 	except:
 		device = request.COOKIES['device']
 		customer, created = Customer.objects.get_or_create(device=device)
 
-	order, created = Order.objects.get_or_create(customer_id=customer, status="Delivery")
+	order, created = Order.objects.get_or_create(customer_id=customer, status="Order")
 
-	context = {'order':order}
+	context = {'order':order,"orderitems": orderitems,"food":food}
 	return render(request, 'cart.html', context)

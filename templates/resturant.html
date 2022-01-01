@@ -1,20 +1,30 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-	<div class="row">
-		{% for product in products %}
-		<div class="col-lg-4">
-			<img class="thumbnail" src="{{product.imageURL}}">
-			<div class="box-element product">
-				<h6><strong>{{product.name}}</strong></h6>
-				<hr>
-				
-				<a class="btn btn-outline-success" href="{% url 'product' product.id %}">View Product</a>
-				<h4 style="display: inline-block; float: right"><strong>${{product.price}}</strong></h4>
 
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/cart/css/main.css' %}">
+{% endblock css %}
+	<div class="row">
+		
+		<div class="col-lg-4">
+			{% for product in products %}
+			
+			<img class="thumbnail" style="height: 500px; width: 500px;" src="{{ product.food_id.photo.url }}">
+			<div class="box-element product">
+				<h5><strong>{{product.food_id.name}}</strong></h5>
+			
+				 <a class="btn btn-outline-success" href="{% url 'product' product.id %}">View Product</a>
+				<h4 style="display: inline-block; float: right"><strong>${{product.price}}</strong></h4>
+				
+				
+				
 			</div>
 		</div>
-		{% endfor %}
+		<hr>
+			{% endfor %}
+			
+				
 	</div>
 
 {% endblock content %}

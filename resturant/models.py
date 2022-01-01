@@ -79,6 +79,7 @@ class FoodMenu(models.Model):
     number = models.IntegerField()
     
 
+
     def __str__(self) :
         return f"""{self.food_id} + "foodmenu" """
 
@@ -87,8 +88,33 @@ class OrderItem(models.Model):
     #اگه اوردر ایتم حذف شه اوردر هم حذف میشه
     food_menu_id = models.ForeignKey(FoodMenu, on_delete=models.SET_NULL,null=True, related_name='foodmenu')
     #اگه فود منو
-    number = models.IntegerField()
+    number = models.IntegerField(null=True)
     # total_price = models.IntegerField()
+
+    @property
+    def get_total(self):
+        total = self.price * self.number
+        return total
+
+
+    @property
+    def get_cart_total(self):
+        orderitems = Order.objects.filter(id = self.order_id)
+        total = sum([item.get_total for item in orderitems])
+        return total 
+
+    @property
+    def get_cart_items(self):
+        orderitems = Order.objects.filter(id = self.order_id)
+        total = sum([item.quantity for item in orderitems])
+        return total 
+
+
+    @property
+    def get_total(self):
+        total = self.product.price * self.number
+        return total
+
 
     def __str__(self):
         return f"{self.order_id} order"
@@ -106,7 +132,7 @@ class Meal(models.Model):
 
     # )
     name=models.CharField(max_length=30)
-    food_id=models.ManyToManyField(Food,related_name='food_meal')
+    # food_id=models.ManyToManyField(Food,related_name='food_meal')
     # name = models.MultipleChoiceField(choices = MEAL_CHOICES)
     # food_id=models.ManyToManyField(Food,related_name='food_meal')
 
@@ -123,7 +149,7 @@ class Order(models.Model):
     )
     # order_count=models.IntegerField()
     customer_id = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
-    food_menu_id = models.ManyToManyField(FoodMenu)
+    # food_menu_id = models.ManyToManyField(FoodMenu)
     total_price=models.IntegerField(null=True)
     delivery_time=models.DateTimeField(auto_now=True)
     status=models.CharField(max_length=8, choices=ORDER_STATUS, default='Order')
@@ -131,10 +157,13 @@ class Order(models.Model):
     customeraddress_id=models.OneToOneField(CustomerAdress,on_delete=models.CASCADE,null=True,related_name="custumer_address")
     # order_item_id = models.ManyToManyField(OrderItem, verbose_name="order_item",related_name="order_item_id")
     foodmenu_id=models.ManyToManyField(FoodMenu,through=OrderItem,related_name='food')
+ 
 
     @property
     def created_at_jalali(self):
         return jdatetime.datetime.fromgregorian(datetime=self.created_date)
+    
+     
 
     def __str__(self) :
         return self.status

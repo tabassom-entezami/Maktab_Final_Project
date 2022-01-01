@@ -1,10 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-
+{% block css %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/cart/css/main.css' %}">
+{% endblock css %} 
 <div class="row">
 	<div class="col-lg-6">
-		<img style="border:1px solid #888" src="{{product.imageURL}}">
+		<img style="border:1px solid #888" src="{{product.food_id.photo.url}}">
 	</div>
 
 	<div style="padding:50px" class="col-lg-6">
@@ -14,7 +17,7 @@
 		
 		<form method="POST" action="{% url 'product' product.id %}">
 			{% csrf_token %}
-			<input min="1" value=1 type="number" name="quantity">
+			<input min="1" value=1 type="number" name="number">
 			<input class="btn btn-dark" type="submit" value="Add to Cart">
 		</form>
 

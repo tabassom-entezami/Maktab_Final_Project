@@ -1,14 +1,15 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% comment %} {% block css %}
+{% block css %}
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
-{% endblock css %} {% endcomment %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/cart/css/main.css' %}">
+{% endblock css %} 
 
 
 {% block content %}
-	{% if order != None %}
+    
+	{% if orderitems != None %}
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="box-element">
@@ -19,8 +20,8 @@
 				<br>
 				<table class="table">
 					<tr>
-						<th><h5>Items: <strong>{{order.get_cart_items}}</strong></h5></th>
-						<th><h5>Total:<strong> ${{order.get_cart_total|floatformat:2}}</strong></h5></th>
+						<th><h5>Items: <strong>{{orderitems.get_cart_items}}</strong></h5></th>
+						<th><h5>Total:<strong> ${{orderitems.total_price|floatformat:2}}</strong></h5></th>
 						<th>
 							<a  style="float:right; margin:5px;" class="btn btn-success" href="">Checkout</a>
 						</th>
@@ -28,32 +29,43 @@
 				</table>
 
 			</div>
-
+			<br>
+			{% for food in food %}
+			<span class="cart-row ">
+				<span style="flex:2"><img class="row-image" src="{{ food.photo.url }}"></span> 
+			</span>
+			{% endfor %}
 			<br>
 			<div class="box-element">
 				<div class="cart-row d-flex">
 					<div style="flex:2"></div>
-					<div style="flex:2 ;"><strong>Item</strong></div>
+					<div style="flex:2 ;"><strong>name + menu</strong></div>
 					<div style="flex:1"><strong>Price</strong></div>
 					<div style="flex:1"><strong>number</strong></div>
 					<div style="flex:1"><strong>Total</strong></div>
-					<div style="flex:1"><strong>Update</strong></div>
-					<div style="flex:1"><strong>Remove</strong></div>
+					<div style="flex:1"><strong></strong></div>
+					{% comment %} <div style="flex:1"><strong>Remove</strong></div> {% endcomment %}
 
 				</div>
-				{% for item in order.orderitem_set.all %}
-				<div class="cart-row">
-					<div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
-					<div style="flex:2"><p>{{item.product.name}}</p></div>
-					<div style="flex:1"><p>${{item.product.price|floatformat:2}}</p></div>
-					<div style="flex:1"><p class="number">{{item.number}}</p></div>
-					<div style="flex:1"><p>${{item.get_total|floatformat:2}}</p></div>
-					<div style="flex:1">
-						<a class="btn btn-sm btn-dark" href="{% url 'product' item.product.id %}">Update</a>
+				
+				{% for item in orderitems %}
+				<div class="cart-row d-flex">
+					<div class="col-2">
+						{% comment %} <a class="btn btn-sm btn-dark" href="{% url 'product' item.FoodMenu.id %}">Update</a> {% endcomment %}
 					</div>
-					<div style="flex:1">
+					
+					{% comment %} <div style="flex:2"><img class="row-image" src="{{ food.photo.url }}"></div>  {% endcomment %}
+					
+					<div class="col-4"><p>{{item.food_menu_id}}</p></div>
+					<div class="col-2"><p>${{item.price|floatformat:2}}</p></div>
+					<div class="col-1"><p class="quantity">{{item.number}}</p></div>
+					<div class="col-3" ><p>${{item.total_price|floatformat:2}}</p></div>
+					<div class="col-2">
+						{% comment %} <a class="btn btn-sm btn-dark" href="{% url 'product' item.FoodMenu.id %}">Update</a> {% endcomment %}
+					</div>
+					{% comment %} <div style="flex:1">
 						<a class="btn btn-sm btn-danger" href="">Remove</a>
-					</div>
+					</div> {% endcomment %}
 				</div>
 				{% endfor %}
 			</div>
