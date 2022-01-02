@@ -24,6 +24,12 @@ class SignUpView(generic.CreateView):
     success_url = reverse_lazy('Home') 
     template_name = 'registration/signup.html'
 
+class SignUpManagerView(generic.CreateView):
+    form_class = CostumRegisterForm1 
+    success_url = reverse_lazy('Home') 
+    template_name = 'registration/signupmanager.html'
+
+
 class LoginView(generic.CreateView): 
     form_class = CostumRegisterForm 
     success_url = reverse_lazy('Home') 
