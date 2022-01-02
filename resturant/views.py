@@ -14,7 +14,12 @@ from django.contrib.auth.decorators import login_required
 
 # @login_required
 def home_page(re):
-    return render(re, "Home.html")
+	products = FoodMenu.objects.all().filter(number__gt=0)
+	food = Food.objects.all()
+	best_foods= Food.objects.filter(food__foodmenu__order_id__status = "Send")
+
+	context = {'products':products,"food":food}
+	return render(re, "Home.html" , context)
 # Create your views here.
 
 
@@ -29,37 +34,47 @@ def resturant(request):
 
 def product(request, pk):
 	product = FoodMenu.objects.get(id=pk)
-	food = Food.objects.get(id=pk)
+	food = Food.objects.get(food__id = pk)
 	if request.method == 'POST':
 		product = FoodMenu.objects.get(id=pk)
-		
+		# flag = True
 		#Get user account information
 		try:
 			customer = request.user.customer
 		except:
 			device = request.COOKIES['device']
-			customer, created = Customer.objects.get_or_create(device=device)
+			customer, created = Customer.objects.get_or_create(device=device,username=device)
+		# print(FoodMenu.objects.all().filter(id = pk).values_list('number').last()[0])
 
-		order, created = Order.objects.get_or_create(customer_id=customer, status="Order")
-		orderItem, created = OrderItem.objects.get_or_create(order_id=order, food_menu_id=product)
-		orderItem.number =request.POST['number']
-		orderItem.save()
-
-		return redirect('cart')
+		if ((FoodMenu.objects.all().filter(id = pk).values_list('number').last())[0]> int(request.POST['number']) and (FoodMenu.objects.all().filter(id = pk).values_list('branch_id'))):
+			flag = True
+			order, created = Order.objects.get_or_create(customer_id=customer, status="Order")
+			orderItem, created = OrderItem.objects.get_or_create(order_id=order, food_menu_id=product)
+			orderItem.number =request.POST['number']
+			orderItem.save()
+			# makeitcorrect =FoodMenu.objects.all().filter(id = pk).values_list('number').last()[0]  - int(request.POST['number'])
+			# product.number = makeitcorrect
+			# product.save()
+			return redirect('cart')
+		else:
+				context = {'product':product, "food":food ,'msg':"we dont have enough"}
+				return render(request, 'product.html', context)
 
 	context = {'product':product, "food":food }
 	return render(request, 'product.html', context)
 
-def cart(request):
-	orderitems=OrderItem.objects.filter(order_id__isnull=False)
-	food = Food.objects.filter(food__foodmenu__order_id__isnull=False)
+def cart(request):# باید بعدا درست شه
+	device = request.COOKIES['device']
+	orderitems=OrderItem.objects.filter(order_id__customer_id__username=device)
+	food = Food.objects.filter(food__foodmenu__order_id__customer_id__username=device)
+	orders = Order.objects.filter(customer_id__username=device) # بعدا
 	try:
 		customer = request.user.customer
 	except:
 		device = request.COOKIES['device']
-		customer, created = Customer.objects.get_or_create(device=device)
+		customer, created = Customer.objects.get_or_create(device=device ,username = device)
 
-	order, created = Order.objects.get_or_create(customer_id=customer, status="Order")
+	order, created = Order.objects.get_or_create(customer_id=customer,status="Order")
 
-	context = {'order':order,"orderitems": orderitems,"food":food}
+	context = {'order':order,"orderitems": orderitems,"food":food,"orders":orders}
 	return render(request, 'cart.html', context)

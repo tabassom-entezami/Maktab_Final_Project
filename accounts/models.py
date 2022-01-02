@@ -3,11 +3,13 @@ from django.contrib.auth.models import AbstractUser
 
 
 class CustomUser(AbstractUser):
+    
     email=models.EmailField(unique=True)
     
 
 
 class Customer(CustomUser):
+    
     customeraddress_id=models.ManyToManyField("CustomerAdress",related_name='customer_address')
     device = models.CharField(max_length=200, null=True, blank=True)
     class Meta:

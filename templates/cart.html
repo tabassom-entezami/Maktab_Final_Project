@@ -12,27 +12,29 @@
 	{% if orderitems != None %}
 	<div class="row">
 		<div class="col-lg-12">
-			<div class="box-element">
+			<div class="box-element "  style="padding:50px">
 
-				<a  class="btn btn-outline-dark" href="{% url 'store' %}">&#x2190; Continue Shopping</a>
-
+				<a  class="btn btn-outline-dark"  href="{% url 'store' %}">&#x2190; Continue Shopping</a>
+				<h1>{{msg}}</h1>
 				<br>
 				<br>
+				{% for orderitems in orders %}
 				<table class="table">
 					<tr>
 						<th><h5>Items: <strong>{{orderitems.get_cart_items}}</strong></h5></th>
-						<th><h5>Total:<strong> ${{orderitems.total_price|floatformat:2}}</strong></h5></th>
+						<th><h5>Total:<strong> ${{orderitems.get_total|floatformat:2}}</strong></h5></th>
 						<th>
 							<a  style="float:right; margin:5px;" class="btn btn-success" href="">Checkout</a>
 						</th>
 					</tr>
 				</table>
-
+				{% endfor %}
 			</div>
 			<br>
+			
 			{% for food in food %}
-			<span class="cart-row ">
-				<span style="flex:2"><img class="row-image" src="{{ food.photo.url }}"></span> 
+			<span class="cart-row " style="padding:50px">
+				<span style="flex:2 "><img class="row-image" src="{{ food.photo.url }}"></span> 
 			</span>
 			{% endfor %}
 			<br>
@@ -59,13 +61,11 @@
 					<div class="col-4"><p>{{item.food_menu_id}}</p></div>
 					<div class="col-2"><p>${{item.price|floatformat:2}}</p></div>
 					<div class="col-1"><p class="quantity">{{item.number}}</p></div>
-					<div class="col-3" ><p>${{item.total_price|floatformat:2}}</p></div>
+					<div class="col-3" ><p>${{item.get_total|floatformat:2}}</p></div>
 					<div class="col-2">
-						{% comment %} <a class="btn btn-sm btn-dark" href="{% url 'product' item.FoodMenu.id %}">Update</a> {% endcomment %}
+
 					</div>
-					{% comment %} <div style="flex:1">
-						<a class="btn btn-sm btn-danger" href="">Remove</a>
-					</div> {% endcomment %}
+				
 				</div>
 				{% endfor %}
 			</div>

@@ -81,7 +81,7 @@ class FoodMenu(models.Model):
 
 
     def __str__(self) :
-        return f"""{self.food_id} + "foodmenu" """
+        return f"""{self.food_id} , {self.branch_id} """
 
 class OrderItem(models.Model):
     order_id = models.ForeignKey('Order', on_delete=models.CASCADE ,related_name='order')
@@ -91,29 +91,12 @@ class OrderItem(models.Model):
     number = models.IntegerField(null=True)
     # total_price = models.IntegerField()
 
-    @property
+    @property #بعدا درست شه
     def get_total(self):
-        total = self.price * self.number
+       
+        total = (FoodMenu.objects.all().filter(foodmenu__order_id = self.order_id).filter(foodmenu__order_id__isnull = False).values_list('number').first()[0]) * (FoodMenu.objects.all().filter(foodmenu__order_id = self.order_id ).filter(foodmenu__order_id__isnull=False).values_list('price').first()[0])
         return total
 
-
-    @property
-    def get_cart_total(self):
-        orderitems = Order.objects.filter(id = self.order_id)
-        total = sum([item.get_total for item in orderitems])
-        return total 
-
-    @property
-    def get_cart_items(self):
-        orderitems = Order.objects.filter(id = self.order_id)
-        total = sum([item.quantity for item in orderitems])
-        return total 
-
-
-    @property
-    def get_total(self):
-        total = self.product.price * self.number
-        return total
 
 
     def __str__(self):
@@ -157,7 +140,18 @@ class Order(models.Model):
     customeraddress_id=models.OneToOneField(CustomerAdress,on_delete=models.CASCADE,null=True,related_name="custumer_address")
     # order_item_id = models.ManyToManyField(OrderItem, verbose_name="order_item",related_name="order_item_id")
     foodmenu_id=models.ManyToManyField(FoodMenu,through=OrderItem,related_name='food')
- 
+    
+    @property
+    def get_cart_total(self): #بعدا اوکی شه
+        orderitems = OrderItem.objects.filter(order_id = self.id)
+        total = sum([item.get_total for item in orderitems])
+        return total 
+
+    @property
+    def get_cart_items(self):
+        orderitems = OrderItem.objects.filter(order_id = self.id)
+        total = sum([item.number for item in orderitems])
+        return total 
 
     @property
     def created_at_jalali(self):
