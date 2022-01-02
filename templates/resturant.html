@@ -5,15 +5,15 @@
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static 'assets/cart/css/main.css' %}">
 {% endblock css %}
-	<div class="row">
+	<div class="row d-flex  p-5">
 		
-		<div class="col-lg-4">
+		<div class="col-4" >
 			{% for product in products %}
 			
-			<img class="thumbnail" style="height: 500px; width: 500px;" src="{{ product.food_id.photo.url }}">
-			<div class="box-element product">
+			<img class="thumbnail  " style="height: 200px; width: 200px; padding: 50px; border: 2px solid black;" src="{{ product.food_id.photo.url }}">
+			<div class="box-element product "  >
 				<h5><strong>{{product.food_id.name}}</strong></h5>
-				<h4 style="display: block;"><strong>${{product.price}}</strong></h4>
+				<h4 style="display: block; "><strong>${{product.price}}</strong></h4>
 				 <a class="btn btn-outline-success" href="{% url 'product' product.id %}">View Product</a>
 				
 				<div style="padding-top: 30px;"></div>

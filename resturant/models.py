@@ -94,7 +94,7 @@ class OrderItem(models.Model):
     @property #بعدا درست شه
     def get_total(self):
        
-        total = (FoodMenu.objects.all().filter(foodmenu__order_id = self.order_id).filter(foodmenu__order_id__isnull = False).values_list('number').first()[0]) * (FoodMenu.objects.all().filter(foodmenu__order_id = self.order_id ).filter(foodmenu__order_id__isnull=False).values_list('price').first()[0])
+        total = ( (self.number) * (FoodMenu.objects.all().filter(foodmenu__order_id = self.order_id ).filter(foodmenu__order_id__isnull=False).values_list('price').first()[0]))
         return total
 
 

@@ -58,7 +58,7 @@ class Admin(CustomUser):
         if not self.id:
             # self.is_staff = True
             self.is_superuser = True
-        return super(Manager,self).save(*args,**kwargs)
+        return super(Admin,self).save(*args,**kwargs)
 
     
 
