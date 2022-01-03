@@ -41,8 +41,7 @@
 			<div class="box-element">
 				<div class="cart-row d-flex">
 					<div style="flex:2"></div>
-					<div style="flex:2 ;"><strong>name + menu</strong></div>
-					<div style="flex:1"><strong>Price</strong></div>
+					<div style="flex:2 ;"><strong>name + menu</strong></div>	
 					<div style="flex:1"><strong>number</strong></div>
 					<div style="flex:1"><strong>Total</strong></div>
 					<div style="flex:1"><strong></strong></div>
@@ -52,14 +51,14 @@
 				
 				{% for item in orderitems %}
 				<div class="cart-row d-flex">
-					<div class="col-2">
+					<div class="col-3">
 						{% comment %} <a class="btn btn-sm btn-dark" href="{% url 'product' item.FoodMenu.id %}">Update</a> {% endcomment %}
 					</div>
 					
 					{% comment %} <div style="flex:2"><img class="row-image" src="{{ food.photo.url }}"></div>  {% endcomment %}
 					
 					<div class="col-4"><p>{{item.food_menu_id}}</p></div>
-					<div class="col-2"><p>${{item.price|floatformat:2}}</p></div>
+					
 					<div class="col-1"><p class="quantity">{{item.number}}</p></div>
 					<div class="col-3" ><p>${{item.get_total|floatformat:2}}</p></div>
 					<div class="col-2">

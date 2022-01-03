@@ -26,8 +26,9 @@ class CostumRegisterForm1(UserCreationForm):
     email = forms.EmailField(required=True)
     # resturant = forms.CharField(required=True,max_length=50)
     # resturant_address = forms.CharField(required=True,max_length=150)
+
     class Meta:
-        model = manager
+        model = Manager
         fields = ("username", "email", "password1", "password2")
         widgets = { 
              'password': forms.PasswordInput(), 

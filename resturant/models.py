@@ -5,7 +5,7 @@ from accounts.models import Manager,CustomerAdress
 # from multiselectfield import MultiSelectField
 from accounts.models import *
 import jdatetime
-
+from django.core.validators import MinValueValidator
     
 
 class Resturant(models.Model):
@@ -76,7 +76,7 @@ class FoodMenu(models.Model):
     branch_id = models.ForeignKey("Branch",on_delete=models.CASCADE,related_name="branch_id")
     #ه قود پاک شه حتما باید منوش هم بره
     price = models.IntegerField()
-    number = models.IntegerField()
+    number = models.IntegerField(validators = [MinValueValidator(1)])
     
 
 
@@ -88,13 +88,14 @@ class OrderItem(models.Model):
     #اگه اوردر ایتم حذف شه اوردر هم حذف میشه
     food_menu_id = models.ForeignKey(FoodMenu, on_delete=models.SET_NULL,null=True, related_name='foodmenu')
     #اگه فود منو
-    number = models.IntegerField(null=True)
+    number = models.IntegerField(null=True,validators = [MinValueValidator(1)])
     # total_price = models.IntegerField()
 
     @property #بعدا درست شه
     def get_total(self):
-       
-        total = ( (self.number) * (FoodMenu.objects.all().filter(foodmenu__order_id = self.order_id ).filter(foodmenu__order_id__isnull=False).values_list('price').first()[0]))
+        foodname = str(Food.objects.all().filter(food__foodmenu__id = self.id).values_list("name")[0][0])
+        print(foodname)
+        total = ( (self.number) * int(FoodMenu.objects.all().filter(foodmenu__order_id = self.order_id ).filter(foodmenu__order_id__isnull=False).filter(food_id__name = foodname).values_list('price')[0][0]))
         return total
 
 

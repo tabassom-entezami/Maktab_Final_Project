@@ -16,9 +16,12 @@ from django.contrib.auth.decorators import login_required
 def home_page(re):
 	products = FoodMenu.objects.all().filter(number__gt=0)
 	food = Food.objects.all()
-	best_foods= Food.objects.filter(food__foodmenu__order_id__status = "Send")
 
-	context = {'products':products,"food":food}
+	best_foods = []
+	best_foods=( Food.objects.all().filter(food__foodmenu__order_id__status = "Send").values_list("name"))
+	
+	print(best_foods)
+	context = {'products':products,"food":food,"best_foods":best_foods}
 	return render(re, "Home.html" , context)
 # Create your views here.
 
@@ -70,10 +73,11 @@ def cart(request):# باید بعدا درست شه
 	orders = Order.objects.filter(customer_id__username=device) # بعدا
 	try:
 		customer = request.user.customer
+
 	except:
 		device = request.COOKIES['device']
 		customer, created = Customer.objects.get_or_create(device=device ,username = device)
-
+		
 	order, created = Order.objects.get_or_create(customer_id=customer,status="Order")
 
 	context = {'order':order,"orderitems": orderitems,"food":food,"orders":orders}
