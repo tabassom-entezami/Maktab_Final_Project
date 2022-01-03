@@ -34,7 +34,8 @@
 			
 			{% for food in food %}
 			<span class="cart-row " style="padding:50px">
-				<span style="flex:2 "><img class="row-image" src="{{ food.photo.url }}"></span> 
+				<span style="flex:2 "><img class="row-image" style=" border:20px solid black;" src="{{ food.photo.url }}"></span> 
+
 			</span>
 			{% endfor %}
 			<br>
@@ -62,7 +63,9 @@
 					<div class="col-1"><p class="quantity">{{item.number}}</p></div>
 					<div class="col-3" ><p>${{item.get_total|floatformat:2}}</p></div>
 					<div class="col-2">
-
+					<div class="col-2"> 
+						<a href="{% url 'delete-item' item.id %}">remove</a>
+				</div>
 					</div>
 				
 				</div>

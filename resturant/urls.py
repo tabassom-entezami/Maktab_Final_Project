@@ -8,5 +8,6 @@ urlpatterns = [
     path('foods/',resturant, name="store"),
 	path('cart/', cart, name="cart"),
 	path('product/<int:pk>/', product, name="product"),
+    path('delete-item/<int:pk>',DeleteItem.as_view(),name = "delete-item")
     
 ]

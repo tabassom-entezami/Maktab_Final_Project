@@ -6,9 +6,10 @@
 <link rel="stylesheet" type="text/css" href="{% static 'assets/cart/css/main.css' %}">
 {% endblock css %} 
 <div style = "padding : 100px">
-
+	<a  class="btn btn-outline-dark"  href="{% url 'store' %}">&#x2190; Continue Shopping</a>
 </div>
 <div class="row d-flex">
+
 	<div class="flex-column col-6" style = "padding:50px ; padding-top : 30px">
 		<img style=" border:2px solid black; padding:50px;" src="{{product.food_id.photo.url}}">
 	</div>
