@@ -134,7 +134,7 @@ class Order(models.Model):
     # order_count=models.IntegerField()
     customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE,  blank=True)
     # food_menu_id = models.ManyToManyField(FoodMenu)
-    total_price=models.IntegerField(null=True)
+    total_price=models.IntegerField( null=True)
     delivery_time=models.DateTimeField(auto_now=True)
     status=models.CharField(max_length=8, choices=ORDER_STATUS, default='Order')
     created_date=models.DateTimeField(auto_now_add=True)

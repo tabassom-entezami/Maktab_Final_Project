@@ -8,8 +8,13 @@ urlpatterns = [
     path('foods/',resturant, name="store"),
 	path('cart/', cart, name="cart"),
 	path('product/<int:pk>/', product, name="product"),
-    path('delete-item/<int:pk>',DeleteItem.as_view(),name = "delete-item"),
-    path('food_id', food_add_panel_admin , name = "addfood"),
-    path('food_form_add', webmanager,name = "manager")
+    path('delete-item/<int:pk>/',DeleteItem.as_view(),name = "delete-item"),
+    path('foodadd/', AddFoodPanelAdmin.as_view() , name = "addfood"),
+    path('foodupdate/<int:pk>/', UpdateFoodPanelAdmin.as_view() , name = "updatefood"),
+    path('fooddelete/<int:pk>/', DeleteFoodPanelAdmin.as_view() , name = "deletefood"),
+    path('panel/', panel_admin , name ="paneladmin"),
+    path('categoryadd/', AddCategoryPanelAdmin.as_view() , name = "addcategory"),
+
+
     
 ]
