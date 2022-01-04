@@ -52,14 +52,16 @@
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'cart' %}">cart</a>
               </li>
+              {% if user.is_authenticated and user.is_superuser %}
               <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">Dropdown</a>
+                <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">manager actions</a>
                 <ul class="dropdown-menu" aria-labelledby="dropdown04">
-                  <li><a class="dropdown-item" href="#">Action</a></li>
-                  <li><a class="dropdown-item" href="#">Another action</a></li>
-                  <li><a class="dropdown-item" href="#">Something else here</a></li>
+                  <li><a class="dropdown-item" href="{% url 'addfood' %}">add food</a></li>
+                  <li><a class="dropdown-item" href="{% url 'addcategory' %}">add category</a></li>
+                  <li><a class="dropdown-item" href="{% url 'paneladmin' %}">panel admin</a></li>
                 </ul>
               </li>
+              {% endif %}
             </ul>
             <form>
               <input class="form-control" type="text" placeholder="Search" aria-label="Search">

@@ -31,6 +31,10 @@ class managerAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return Manager.objects.filter(is_staff=True, is_superuser=False)
 
+    def save_model(self, request, obj, form, change):
+        obj.set_password(form.cleaned_data["password"])
+        obj.save()
+
 @admin.register(Admin)
 class AdminProxyAdmin(admin.ModelAdmin):
     list_display = ['id', 'username', 'email']

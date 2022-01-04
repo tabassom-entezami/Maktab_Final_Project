@@ -41,3 +41,4 @@ class CostumRegisterForm1(UserCreationForm):
         if commit:
             user.save()
         return user
+ 

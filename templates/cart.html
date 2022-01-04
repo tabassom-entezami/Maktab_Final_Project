@@ -15,10 +15,10 @@
 			<div class="box-element "  style="padding:50px">
 
 				<a  class="btn btn-outline-dark"  href="{% url 'store' %}">&#x2190; Continue Shopping</a>
-				<h1>{{msg}}</h1>
+				
 				<br>
 				<br>
-				{% for orderitems in orders %}
+				{% for orderitems in order %}
 				<table class="table">
 					<tr>
 						<th><h5>Items: <strong>{{orderitems.get_cart_items}}</strong></h5></th>
@@ -34,7 +34,7 @@
 			
 			{% for food in food %}
 			<span class="cart-row " style="padding:50px">
-				<span style="flex:2 "><img class="row-image" style=" border:20px solid black;" src="{{ food.photo.url }}"></span> 
+				{% comment %} <span style="flex:2 "><img class="row-image" style=" border:20px solid black;" src="{{ food.photo.url }}"></span>  {% endcomment %}
 
 			</span>
 			{% endfor %}
@@ -42,27 +42,29 @@
 			<div class="box-element">
 				<div class="cart-row d-flex">
 					<div style="flex:2"></div>
-					<div style="flex:2 ;"><strong>name + menu</strong></div>	
+					<div style="flex:2 ;"><strong>name + menu</strong></div>
+					<div style="flex:1"><strong>price</strong></div>
 					<div style="flex:1"><strong>number</strong></div>
 					<div style="flex:1"><strong>Total</strong></div>
-					<div style="flex:1"><strong></strong></div>
+					<div style="flex:1"><strong>remove</strong></div>
 					{% comment %} <div style="flex:1"><strong>Remove</strong></div> {% endcomment %}
 
 				</div>
 				
 				{% for item in orderitems %}
 				<div class="cart-row d-flex">
-					<div class="col-3">
-						{% comment %} <a class="btn btn-sm btn-dark" href="{% url 'product' item.FoodMenu.id %}">Update</a> {% endcomment %}
+					{% comment %} <div class="col-3">
+						 <a class="btn btn-sm btn-dark" href="{% url 'product' item.FoodMenu.id %}">Update</a> 
 					</div>
+					 {% endcomment %}
+					 <div class = "col-2"></div>
+					<div style="col-4"><img class="row-image" style=" border:10px solid black; height: 100px; width: 100px;" src="{{ item.food_menu_id.food_id.photo.url }}"></div>  
 					
-					{% comment %} <div style="flex:2"><img class="row-image" src="{{ food.photo.url }}"></div>  {% endcomment %}
-					
-					<div class="col-4"><p>{{item.food_menu_id}}</p></div>
-					
+					<div class="col-3"><p>{{item.food_menu_id}}</p></div>
+					<div class="col-2"><p>${{item.food_menu_id.price|floatformat:2}}</P></div>
 					<div class="col-1"><p class="quantity">{{item.number}}</p></div>
-					<div class="col-3" ><p>${{item.get_total|floatformat:2}}</p></div>
-					<div class="col-2">
+					<div class="col-2" ><p>${{item.get_total|floatformat:2}}</p></div>
+					
 					<div class="col-2"> 
 						<a href="{% url 'delete-item' item.id %}">remove</a>
 				</div>

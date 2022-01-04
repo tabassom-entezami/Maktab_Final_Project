@@ -98,8 +98,7 @@ class OrderItem(models.Model):
         total = ( (self.number) * int(FoodMenu.objects.all().filter(foodmenu__order_id = self.order_id ).filter(foodmenu__order_id__isnull=False).filter(food_id__name = foodname).values_list('price')[0][0]))
         return total
 
-
-
+    
     def __str__(self):
         return f"{self.order_id} order"
 class Category(models.Model):
