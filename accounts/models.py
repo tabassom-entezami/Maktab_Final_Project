@@ -40,7 +40,7 @@ class CustomerAdress(models.Model):
 
 class Manager(CustomUser):
     class Meta:
-        proxy=True
+        # proxy=True
         verbose_name="resturant manager"
 
     def save(self,*args, **kwargs):

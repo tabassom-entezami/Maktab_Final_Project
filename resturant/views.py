@@ -2,7 +2,9 @@ from django.db import models
 from django.db.models.expressions import OrderBy
 from django.http import request
 from django.shortcuts import render, redirect
-from django.views.generic.edit import DeleteView 
+from django.views.generic.edit import DeleteView
+
+from resturant.forms import FoodForm 
 from .models import *
 from accounts.models import *
 from django.views.decorators.http import require_POST
@@ -38,16 +40,21 @@ def home_page(re):
 	return render(re, "Home.html" , context)
 # Create your views here.
 
-    	
+
+def webmanager(req):
+    form = FoodForm
+    return render(req,"addfood.html",{"form":form})
+
 
 @api_view(['POST'])
-def foodUpdate_paneladmin(request, pk):
+def food_add_panel_admin(request, pk):
+
     food = Food.objects.get(id=pk)
     serializer = FoodSerilizer(instance=food, data=request.data)
 
     if serializer.is_valid():
         serializer.save()
-        api_root = reverse_lazy('logout', request=request)
+        return reverse_lazy('store', request=request)
     return Response(serializer.data)
 
 class DeleteItem(DeleteView):

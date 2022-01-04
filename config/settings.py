@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'resturant',
     'multiselectfield',
     'allauth.socialaccount',
+    "rest_framework",
 ]
 ACCOUNT_FORMS = {
     "signup": "accounts.forms.CostumRegisterForm",
