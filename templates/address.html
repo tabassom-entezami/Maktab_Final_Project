@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-black-50">Add Address First</h2>
+    <form method="post" class="text-black-50">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input class="sendButton" type="submit" name="add_address" value="Add Address">
+    </form>
+</div>
+{% endblock content %}

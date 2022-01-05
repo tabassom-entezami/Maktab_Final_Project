@@ -30,6 +30,7 @@ class Branch(Resturant):
     discreption=models.TextField(max_length=200)
     is_open= models.BooleanField(choices=OPEN_STATUS, verbose_name='IsOpen', default=False)
     create_date=models.DateTimeField(auto_now_add=True)
+    foods = models.ManyToManyField("Food",through='FoodMenu',related_name='food_menu')
     # order_id=models.ForeignKey("Order",on_delete=models.CASCADE,null=True,verbose_name="which_order",related_name='order_id')
     # resturant_id = models.ForeignKey("resturant",on_delete=models.SET_NULL,null=True,related_name ="resturant",verbose_name="which_resturant")
     # هیچ رستورانی بدون شعبه و یا برعکس نمیتونه باشه
@@ -61,7 +62,7 @@ class Food(models.Model):
     # کتگوری نداریم پس نباید پاک شن غذای بدون 
     # menu_id = models.ManyToManyField('Menu',through="FoodMenu",related_name='food_menu')
     meal_id = models.ManyToManyField("Meal",related_name="meal")
-    branch_id = models.ManyToManyField(Branch,through='FoodMenu',related_name='food_menu')
+    
 
     @property
     def created_at_jalali(self):

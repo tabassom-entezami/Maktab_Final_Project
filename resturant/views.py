@@ -8,8 +8,7 @@ from resturant.forms import *
 from .models import *
 from accounts.models import *
 from django.views.decorators.http import require_POST
-from django.http import JsonResponse
-from django.contrib import messages
+from .decorators import *
 from django.contrib.messages.views import SuccessMessageMixin
 from accounts.models import *
 from django.contrib.auth.decorators import login_required
@@ -21,12 +20,6 @@ from django.urls import reverse_lazy
 # @login_required
 def home_page(re):
 	products = FoodMenu.objects.all().filter(number__gt=0)
-	# food = Food.objects.all()
-
-	# best_foods = []
-	#  best_foods=( Food.objects.all().filter(food__foodmenu__order_id__status = "Delivery"))
-	# best = OrderItem.objects.all().filter(order_id__status = "Send").annotate(Count('number')).order_by("-number__count")[:3]
-	
 	foods_deliverd= Food.objects.all().filter(food__foodmenu__order_id__status = "Peyment")
 	my_dict ={}
 	for i in foods_deliverd:
@@ -38,9 +31,9 @@ def home_page(re):
 
 	values = Food.objects.all().filter(food__foodmenu__order_id__status = "Peyment").annotate(our_sum=Sum("food__foodmenu__number")).order_by("-our_sum")[:3]
 
+	best_branchs = Branch.objects.filter(foods__food__foodmenu__order_id__status='Peyment').annotate(sums =Sum("foods__food__foodmenu__order_id__total_price") ).order_by("-sums")[:3]
 
-
-	context = {'products':products,"way2":best_foods,"best_foods":values}
+	context = {'products':products,"way2":best_foods,"best_foods":values,"best_branchs":best_branchs}
 	return render(re, "Home.html" , context)
 # Create your views here.
 
@@ -59,11 +52,13 @@ class AddFoodPanelAdmin(CreateView):
 	template_name = "addfood.html"
 	fields = "__all__"
 
+
 class AddCategoryPanelAdmin(CreateView):
 	model = Category
 	success_url = reverse_lazy("paneladmin")
 	template_name = "addcategory.html"
 	fields = "__all__"
+
 
 class UpdateFoodPanelAdmin(UpdateView):
 	model = Food
@@ -71,9 +66,10 @@ class UpdateFoodPanelAdmin(UpdateView):
 	template_name = "updatefood.html"
 	fields = "__all__"
 
+
 class DeleteFoodPanelAdmin(DeleteView):
 	model = Food
-	template_name = "deletefood.html"
+	template_name = "deletefoodpanel.html"
 	success_url = reverse_lazy("paneladmin")
 	fields = "__all__"
 
@@ -81,7 +77,7 @@ class DeleteItem(DeleteView):
 	model = OrderItem
 	template_name = "deletefood.html"
 	success_url = reverse_lazy("cart")
-	
+	fields = "__all__"
 
 
 def resturant(request):
@@ -99,6 +95,7 @@ def product(request, pk):
 		#Get user account information
 		try:
 			customer = request.user.customer
+			print(request.user)
 		except:
 			device = request.COOKIES['device']
 			customer, created = Customer.objects.get_or_create(device=device,username=device)
@@ -107,7 +104,7 @@ def product(request, pk):
 		if ((FoodMenu.objects.all().filter(id = pk).values_list('number').last())[0]>= int(request.POST['number'])):
 			flag = True
 			order, created = Order.objects.get_or_create(customer_id=customer, status="Order")
-			orderItem, created = OrderItem.objects.get_or_create(order_id=order, food_menu_id=product, number = int(request.POST['number']))
+			orderItem, created = OrderItem.objects.get_or_create(order_id=order, food_menu_id=product)
 			orderItem.number =request.POST['number']
 			orderItem.save()
 			# makeitcorrect =FoodMenu.objects.all().filter(id = pk).values_list('number').last()[0]  - int(request.POST['number'])
@@ -122,14 +119,27 @@ def product(request, pk):
 	return render(request, 'product.html', context)
 
 def cart(request):# باید بعدا درست شه
- 
+	if request.method == 'POST':
+		if request.user.customer :
+			branch = Branch.objects.all().filter(foods__food__foodmenu__order_id__customer_id = request.user.customer)
+			orderitems = OrderItem.objects.filter(order_customer_id = request.user.customer)
+			total = sum([item.get_total for item in orderitems])
+			order, created = Order.objects.get_or_create(customer_id=request.user.customer)
+			order.total_price = total
+			order.branch = branch
+
+
+			
 	try:
 		customer = request.user.customer
 		device = request.COOKIES['device']
 		orderitems=OrderItem.objects.filter(order_id__customer_id__username=customer.username)
 		food = Food.objects.filter(food__foodmenu__order_id__customer_id__username=customer.username)
 		orders = Order.objects.filter(customer_id__username=customer.username)
+		customer_address = CustomerAdress.objects.filter(customer_address__username=customer.username)
+
 	except:
+		customer_address = {}
 		device = request.COOKIES['device']
 		customer, created = Customer.objects.get_or_create(device=device ,username = device)
 		orderitems=OrderItem.objects.filter(order_id__customer_id__username=device)
@@ -137,5 +147,6 @@ def cart(request):# باید بعدا درست شه
 		orders = Order.objects.filter(customer_id__username=device)
 	# order, created = Order.objects.get_or_create(customer_id=customer,status="Order")
 
-	context = {'order':orders,"orderitems": orderitems,"food":food}
+	context = {'order':orders,"orderitems": orderitems,"food":food,"address":customer_address}
 	return render(request, 'cart.html', context)
+

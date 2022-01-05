@@ -24,7 +24,25 @@
 						<th><h5>Items: <strong>{{orderitems.get_cart_items}}</strong></h5></th>
 						<th><h5>Total:<strong> ${{orderitems.get_cart_total|floatformat:2}}</strong></h5></th>
 						<th>
-							<a  style="float:right; margin:5px;" class="btn btn-success" href="">Checkout</a>
+							{%if user.is_authenticated %}
+							<form method="POST" action="">
+								{% csrf_token %}
+								<input class="btn btn-dark float-end" type="submit" value="check out">
+								
+								<li class="nav-item dropdown">
+									<a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">address</a>
+									<ul class="dropdown-menu" aria-labelledby="dropdown04">
+										{% for address in address %}
+									  <li><input class="dropdown-item" name="" href="{% url 'addfood' %}">add food</input></li>
+									  {% endfor %}
+									  <li><input class="dropdown-item" name="" href="{% url 'addfood' %}">add food</input></li>
+									</ul>
+								  </li>
+								
+							</form>
+							{% else %}
+							<a class="btn btn-dark" href="{% url 'login' %}">Log In</a>
+							{% endif %}
 						</th>
 					</tr>
 				</table>
@@ -53,12 +71,9 @@
 				
 				{% for item in orderitems %}
 				<div class="cart-row d-flex">
-					{% comment %} <div class="col-3">
-						 <a class="btn btn-sm btn-dark" href="{% url 'product' item.FoodMenu.id %}">Update</a> 
-					</div>
-					 {% endcomment %}
-					 <div class = "col-2"></div>
-					<div style="col-4"><img class="row-image" style=" border:10px solid black; height: 100px; width: 100px;" src="{{ item.food_menu_id.food_id.photo.url }}"></div>  
+					
+					<div class = "col-2"></div>
+					<div  ><img class="row-image" style=" border:10px solid black; height: 100px; width: 100px;" src="{{ item.food_menu_id.food_id.photo.url }}"></div>  
 					
 					<div class="col-3"><p>{{item.food_menu_id}}</p></div>
 					<div class="col-2"><p>${{item.food_menu_id.price|floatformat:2}}</P></div>
@@ -66,8 +81,8 @@
 					<div class="col-2" ><p>${{item.get_total|floatformat:2}}</p></div>
 					
 					<div class="col-2"> 
-						<a href="{% url 'delete-item' item.id %}">remove</a>
-				</div>
+						<a href="{% url 'deleteitem' item.id %} "  class="btn btn-danger">remove</a>
+				   </div>
 					</div>
 				
 				</div>

@@ -20,7 +20,9 @@ class Customer(CustomUser):
     #         self.is_staff = False
     #         self.is_superuser = False
     #     return super(Manager,self).save(*args,**kwargs)
-    
+
+
+
 
 class CustomerAdress(models.Model):
     class Meta:
