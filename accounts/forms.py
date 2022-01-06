@@ -1,4 +1,5 @@
 from django import forms
+from django.core.validators import MinValueValidator
 
 from django.db.models import manager 
 # from allauth.account.forms import SignupForm
@@ -18,8 +19,6 @@ class CostumRegisterForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
-        device = COOKIES['device']
-        user.username = device
         # user.set_password(self.cleaned_data["password"]) 
         if commit:
             user.save()
@@ -47,6 +46,13 @@ class CostumRegisterForm1(UserCreationForm):
             user.save()
         return user
  
+
+class Address(forms.Form):
+    city = forms.CharField(max_length=150,label="city" , required=True)
+    street = forms.CharField(max_length=150,label="street",required=True)
+    plaque = forms.IntegerField( label= "plaque",required=True,validators=[MinValueValidator(1)])
+
+    
 
 
  

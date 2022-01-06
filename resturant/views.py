@@ -95,31 +95,51 @@ def product(request, pk):
 		# flag = True
 		#Get user account information
 		try:
-			customer = request.user.customer
-			print(request.user)
+			device = request.COOKIES['device']
+			customer = request.user.email
+			our_customer = Customer.objects.get(device = device)
+			our_customer.email = customer
+			our_customer.device = device
+			our_customer.save
+			customer = our_customer
 		except:
 			device = request.COOKIES['device']
-			customer, created = Customer.objects.get_or_create(device=device,username=device , email = device+"@gmail.com")
+			customer, created = Customer.objects.get_or_create(username = device,email=device+"@gmail.com",device=device )
 	
-		
-		if ((FoodMenu.objects.all().filter(id = pk).values_list('number').last())[0]>= int(request.POST['number'])):
-			flag = True
-			order, created = Order.objects.get_or_create(customer_id=customer, status="Order")
-			orderItem, created = OrderItem.objects.get_or_create(order_id=order, food_menu_id=product)
-			orderItem.number =request.POST['number']
-			orderItem.save()
-			
-			return redirect('cart')
+		if (Order.objects.filter(customer_id=customer).filter(status="Order")):
+			if (FoodMenu.objects.filter(id = pk).values_list("branch_id__name").last())[0] != (Order.objects.filter(customer_id=customer).filter(status="Order").values_list("branch__name").first())[0]:
+				if ((FoodMenu.objects.all().filter(id = pk).values_list('number').last())[0]>= int(request.POST['number'])):
+					flag = True
+					order, created = Order.objects.get_or_create(customer_id=customer, status="Order")
+					orderItem, created = OrderItem.objects.get_or_create(order_id=order, food_menu_id=product)
+					orderItem.number =request.POST['number']
+					orderItem.save()
+					
+					return redirect('cart')
+				else:
+						context = {'product':product, "food":food ,'msg':"we dont have enough"}
+						return render(request, 'product.html', context)
+			else:
+				context = {'product':product, "food":food ,'msg':"First remove all the foods from other branches"}
+				return render(request, 'product.html', context)
 		else:
+			if ((FoodMenu.objects.all().filter(id = pk).values_list('number').last())[0]>= int(request.POST['number'])):
+				order, created = Order.objects.get_or_create(customer_id=customer, status="Order")
+				orderItem, created = OrderItem.objects.get_or_create(order_id=order, food_menu_id=product)
+				orderItem.number =request.POST['number']
+				orderItem.save()	
+				return redirect('cart')
+			else:
 				context = {'product':product, "food":food ,'msg':"we dont have enough"}
 				return render(request, 'product.html', context)
+    			
 
 	context = {'product':product, "food":food }
 	return render(request, 'product.html', context)
 
 def cart(request):# باید بعدا درست شه
 	if request.method == 'POST':
-		if request.user.username :
+		if request.user.email :
 			
 			orderitems = OrderItem.objects.filter(order_id__status = "Order")
 			if orderitems:
@@ -137,19 +157,24 @@ def cart(request):# باید بعدا درست شه
 
 			
 	try:
-		customer = request.user.customer
-	
+		customer = request.user.device
+		print(customer)
+		orderitems=OrderItem.objects.filter(order_id__customer_id__email=customer).filter(order_id__status = "Order")
+		food = Food.objects.filter(food__foodmenu__order_id__customer_id__email=customer)
+		orders = Order.objects.filter(customer_id__email=customer).filter(status = "Order")
+		customer_address = CustomerAdress.objects.filter(customer__email=customer)
+		context = {'order':orders,"orderitems": orderitems,"food":food,"address":customer_address}
 
 	except:
 		device = request.COOKIES['device']
 		customer = device
 		
-	
-	orderitems=OrderItem.objects.filter(order_id__customer_id__username=customer).filter(order_id__status = "Order")
-	food = Food.objects.filter(food__foodmenu__order_id__customer_id__username=customer)
-	orders = Order.objects.filter(customer_id__username=customer).filter(status = "Order")
-	customer_address = CustomerAdress.objects.filter(customer__username=customer)
-	context = {'order':orders,"orderitems": orderitems,"food":food,"address":customer_address}
+		
+		orderitems=OrderItem.objects.filter(order_id__customer_id__device=customer).filter(order_id__status = "Order")
+		food = Food.objects.filter(food__foodmenu__order_id__customer_id__device=customer)
+		orders = Order.objects.filter(customer_id__device=customer).filter(status = "Order")
+		customer_address = CustomerAdress.objects.filter(customer__device=customer)
+		context = {'order':orders,"orderitems": orderitems,"food":food,"address":customer_address}
 
 	return render(request, 'cart.html', context)
 

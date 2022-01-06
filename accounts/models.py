@@ -26,7 +26,7 @@ class Customer(CustomUser):
 
 class CustomerAdress(models.Model):
 
-    default = models.BooleanField(default=False)
+    default = models.BooleanField()
     customer=models.ForeignKey("Customer",on_delete=models.SET_NULL,null=True,related_name='customer')
     address = models.ForeignKey("Address",on_delete=models.SET_NULL,null=True,related_name="customer_address")
 

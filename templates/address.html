@@ -2,11 +2,34 @@
 
 {% block content %}
 <div class="container">
-    <h2 class="text-black-50">Add Address First</h2>
-    <form method="post" class="text-black-50">
+    <h2 class="text-black-50">Add Address</h2>
+    <form method="POST">
         {% csrf_token %}
-        {{ form.as_p }}
-        <input class="sendButton" type="submit" name="add_address" value="Add Address">
-    </form>
+        <div class="form-row " \>
+        <div class="form-row "  >
+          <div class="col-md-6 mb-3">
+            <label for="validationDefault03">City</label>
+            <input type="text" class="form-control" id="validationDefault03" name ="city" placeholder="City" required>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="validationDefault04">street</label>
+            <input type="text" class="form-control" id="validationDefault04" name="street" placeholder="street" required>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="validationDefault05">plaque</label>
+            <input type="number" min="1" class="form-control" name="plaque" id="validationDefault05" placeholder="plaque" required>
+          </div>
+          <div class="col-md-3 mb-3">
+            <h6>is it your default address</h6>
+            <select name="it_is" id="validationDefault05" required >
+                <option value="True" selected>yes</option>
+                <option value="False" >no</option>
+            </select>
+            
+          </div>
+        </div>
+
+        <button class="btn btn-dark" type="submit">Submit form</button>
+      </form>
 </div>
 {% endblock content %}

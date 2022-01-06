@@ -26,6 +26,7 @@ class AdressAdmin(admin.ModelAdmin):
 @admin.register(CustomerAdress)
 class CustomerAdressAdmin(admin.ModelAdmin):
     list_display = ['customer', 'address', 'default']
+    list_display_links = ['address']
     empty_value_display = "---"
 
 @admin.register(Manager)
