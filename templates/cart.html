@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/cart/css/main.css' %}">
+{% endblock css %} 
+
+
+{% block content %}
+    
+	{% if orderitems != None %}
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="box-element "  style="padding:50px">
+
+				<a  class="btn btn-outline-dark"  href="{% url 'store' %}">&#x2190; Continue Shopping</a>
+				
+				<br>
+				<br>
+				{% for orderitems in order %}
+				<table class="table">
+					<tr>
+						<th><h5>Items: <strong>{{orderitems.get_cart_items}}</strong></h5></th>
+						<th><h5>Total:<strong> ${{orderitems.get_cart_total|floatformat:2}}</strong></h5></th>
+						<th>
+							{%if user.is_authenticated %}
+							<form method="POST" action="">
+								{% csrf_token %}
+								<input class="btn btn-dark " type="submit" value="check out">
+								
+								<li class="nav-item dropdown float-end">
+									<a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">address</a>
+									<ul class="dropdown-menu" aria-labelledby="dropdown04">
+										{% for address in address %}
+									  <li><input class="dropdown-item" type="" href="{% url 'addfood' %}">{{address.city}}, {{address.street}} , {{address.plaque}} </input></li>
+									  {% endfor %}
+									  <li><a class="btn btn-dark " name="" href="{% url 'addaddress' %}">add address</a></li>
+									</ul>
+								  </li>
+								
+							</form>
+							{% else %}
+							<a class="btn btn-dark" href="{% url 'login' %}">Log In</a>
+							{% endif %}
+						</th>
+					</tr>
+				</table>
+				{% endfor %}
+			</div>
+			<br>
+			
+			{% for food in food %}
+			<span class="cart-row " style="padding:50px">
+				{% comment %} <span style="flex:2 "><img class="row-image" style=" border:20px solid black;" src="{{ food.photo.url }}"></span>  {% endcomment %}
+
+			</span>
+			{% endfor %}
+			<br>
+			<div class="box-element">
+				<div class="cart-row d-flex">
+					<div style="flex:2"></div>
+					<div style="flex:2 ;"><strong>name + menu</strong></div>
+					<div style="flex:1"><strong>price</strong></div>
+					<div style="flex:1"><strong>number</strong></div>
+					<div style="flex:1"><strong>Total</strong></div>
+					<div style="flex:1"><strong>remove</strong></div>
+					{% comment %} <div style="flex:1"><strong>Remove</strong></div> {% endcomment %}
+
+				</div>
+				
+				{% for item in orderitems %}
+				<div class="cart-row d-flex">
+					
+					<div class = "col-2"></div>
+					<div  ><img class="row-image" style=" border:10px solid black; height: 100px; width: 100px;" src="{{ item.food_menu_id.food_id.photo.url }}"></div>  
+					
+					<div class="col-3"><p>{{item.food_menu_id}}</p></div>
+					<div class="col-2"><p>${{item.food_menu_id.price|floatformat:2}}</P></div>
+					<div class="col-1"><p class="quantity">{{item.number}}</p></div>
+					<div class="col-2" ><p>${{item.get_total|floatformat:2}}</p></div>
+					
+					<div class="col-2"> 
+						<a href="{% url 'deleteitem' item.id %} " name = "deleteitem" class="btn btn-danger">remove</a>
+				   </div>
+					</div>
+				
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	{% else %}
+	<h1 style="text-align:center;padding: 100px">No Items in cart</h1>
+	{% endif %}
+{% endblock content %}

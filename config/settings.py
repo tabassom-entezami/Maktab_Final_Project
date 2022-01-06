@@ -39,31 +39,35 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'crispy_forms',
-    'allauth', 
-    'allauth.account', 
+    'allauth',
+    'allauth.account',
     'accounts',
     'resturant',
-
+    'multiselectfield',
+    'allauth.socialaccount',
+    "rest_framework",
 ]
-
+ACCOUNT_FORMS = {
+    "signup": "accounts.forms.CostumRegisterForm",
+}
 AUTH_USER_MODEL = 'accounts.CustomUser'
-LOGIN_REDIRECT_URL = 'home'
-ACCOUNT_LOGOUT_REDIRECT  = 'home'
+LOGIN_REDIRECT_URL = 'Home'
+ACCOUNT_LOGOUT_REDIRECT = 'Home'
 
 SITE_ID = 1
-AUTHENTICATION_BACKENDS = ( 
-    'django.contrib.auth.backends.ModelBackend', 
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
-    
-    )
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
 
-ACCOUNT_SESSION_REMEMBER = True 
-ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False 
+)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email' 
-ACCOUNT_EMAIL_REQUIRED = True 
-ACCOUNT_UNIQUE_EMAIL = True 
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -109,7 +113,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'final_project',
+        'NAME': 'finalmaktab',
         'USER': 'postgres',
         'PASSWORD': 69794050,
         'HOST': 'localhost',
@@ -141,7 +145,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Tehran'
 
 USE_I18N = True
 
@@ -151,7 +155,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR/'static'
+#STATICFILES_DIRS =[ BASE_DIR / 'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR/'media'
 # Default primary key field type

@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="contact_form" style="padding: 50px;">
+    <form id="food_form" method="POST" enctype="multipart/form-data" >
+        {% csrf_token %}
+        <div class="col-sm-12">
+            <div class=" form-group col-10 text-black">
+                {% comment %} {% for field in form %}
+        <div class="col-sm-12  " style="border: 10px solid black; border-radius: 10px;">
+            <div class=" form-group col-10 text-black" >
+            
+            <label class="col-12" style="padding-left: 100px;">{{ field.label }}</label>
+                <hr>
+               <div style="padding-left : 100px; padding-bottom: 50px;" >{{ field }}</div> 
+            </div>
+            
+            </div>
+            {% endfor %} {% endcomment %}
+            {{form.as_p}}
+        </div style="border: 4px solid black;">
+        <input id="button" class="sendButton m-5 p-3" type="submit" name="add_food" value='Add Food'>
+        </div>
+    </form>
+</div>
+{% endblock content %}
+
+
+{% block script %}
+
+{% comment %} <script>
+    $('#food_form').submit(function(e){  
+       
+          
+        Data = $(this).serialize();     
+       
+        data = {'food':Data}
+        $.ajax({
+            type: "POST",
+            url: "{% url 'addfood' %}",
+            data: data,
+            dataType: "JSON",
+            success: function(data){
+                
+                for(var i=0;i<=data.length;i++){
+                    var row=$(
+                        "<div><h2 class='letter_spacing'>"+data[i].food_name+"<span></span></h2>"+"<figure><img src="+data[i].food_image.url+" alt=''></figure>"+
+                            +"<p class='pad_bot1'>"+data[i].food_description+"</p>"+
+                            "<a href='#' class='button1'>Delete</a>"+"<a href='#' class='button1'>Edit</a></div>"
+                    )
+                    $("#my-foods").preppend(row);
+                    console.alert('success')
+                }
+            },
+            failure: function(errMsg) {
+                alert(errMsg);
+            }
+        });
+    
+    });
+    </script> {% endcomment %}
+{% endblock script %}
