@@ -37,7 +37,7 @@ class Branch(Resturant):
 
     @property
     def created_at_jalali(self):
-        return jdatetime.datetime.fromgregorian(datetime=self.created_date)
+        return jdatetime.datetime.fromgregorian(datetime=self.create_date)
 
     def __str__(self) :
         return f"{self.name} "

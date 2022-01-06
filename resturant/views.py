@@ -28,9 +28,9 @@ def home_page(re):
 		my_dict.update({i:order_item_of_one_food})
 	best_foods = dict(sorted(my_dict.items(), key=lambda item: item[1]))
 
-	values = Food.objects.all().filter(food__foodmenu__order_id__status = "Peyment").annotate(our_sum=Sum("food__foodmenu__number")).order_by("-our_sum")[:3]
+	values = Food.objects.all().filter(food__foodmenu__order_id__status = "Peyment").annotate(our_sum=Sum("food__foodmenu__number")).order_by("-our_sum")[:5]
 
-	best_branchs = Branch.objects.filter(foods__food__foodmenu__order_id__status='Peyment').annotate(sums =Sum("foods__food__foodmenu__order_id__total_price") ).order_by("-sums")[:3]
+	best_branchs = Branch.objects.filter(foods__food__foodmenu__order_id__status='Peyment').annotate(sums =Sum("foods__food__foodmenu__order_id__total_price") ).order_by("-sums")[:5]
 
 	context = {'products':products,"way2":best_foods,"best_foods":values,"best_branchs":best_branchs}
 	return render(re, "Home.html" , context)
@@ -139,7 +139,7 @@ def product(request, pk):
 	context = {'product':product, "food":food }
 	return render(request, 'product.html', context)
 
-def cart(request):# باید بعدا درست شه
+def cart(request):# باید بعدا درست شه faz3
 	if request.method == 'POST':
 		if request.user.email :
 			
