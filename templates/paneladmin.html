@@ -3,26 +3,27 @@
 {% block title %}panel admin{% endblock title %}
 {% block content %}
 
-{% for f in foods %}
-<hr>
-<section class="col-1-3"><div class="wrap-col d-flex " style = "padding : 50px">
-<div class="box">
-<div id="my-foods">
-<h2 class="letter_spacing "><span>{{f.name}}</span></h2>
-<figure class="d-inline"><img src="{{f.photo.url}}" alt="" ></figure>
-<p class="pad_bot1 d-inline ">{{f.discreption}}  |||  </p>
-<p class="pad_bot1 d-inline">{{f.created_at_jalali.date}}</p>
-<hr>
-<div></div>
-{% if user.is_authenticated and user.is_superuser%}
- <a href="{% url 'deletefood' f.id %}" class="btn btn-dark">Delete</a>
- <a href="{% url 'updatefood' f.id %}" class="btn btn-dark">Edit</a> 
-{%endif%}
+    {% for f in foods %}
+    <hr>
+    <section class="col-1-3 "><div class="wrap-col d-flex justify-content-evenly" style = "padding : 50px">
+    <div class="box">
+    <div id="my-foods">
+    <h2 class="letter_spacing "><span>{{f.name}}</span></h2>
+    <img style="height: 100px; width: 100px;" src="{{f.photo.url}}" alt="" >
+    <p class="pad_bot1 d-inline ">{{f.discreption}}  |||  </p>
+    <p class="pad_bot1 d-inline">{{f.created_at_jalali.date}}</p>
+    <hr>
+    <div></div>
+    {% if user.is_authenticated and user.is_superuser%}
+    <a href="{% url 'deletefood' f.id %}" class="btn btn-dark">Delete</a>
+    <a href="{% url 'updatefood' f.id %}" class="btn btn-dark">Edit</a> 
+    {%endif%}
 
-</div>
-</div></section>
+    </div>
+    </div></section>
 
-{%endfor%}
+    {%endfor%}
+
 <div class="d-flex justify-content-center  ">
 {% if user.is_authenticated and user.is_superuser%}
  <a href="{% url 'addfood'  %}" class="btn btn-dark">add food</a>

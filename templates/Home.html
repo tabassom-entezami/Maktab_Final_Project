@@ -135,7 +135,8 @@
             <div class="col-lg-6 menu-item filter-starters">
               <img src="{{ product.food_id.photo.url }}" class="menu-img" alt="">
               <div class="menu-content">
-                <a href="{% url 'product' product.id %}">{{product.food_id.name}}</a><span>we have</span>
+                <a href="{% url 'product' product.id %}">{{product.food_id.name}} <b>FROM</b> {{product.branch_id.name}}
+                </a><span>{{product.price}}</span>
               </div>
             </div>
 
