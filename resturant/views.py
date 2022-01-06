@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models.expressions import OrderBy
 from django.db.models.aggregates import Count, Sum
-from django.http import request
+from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.generic.edit import DeleteView,CreateView,UpdateView
 from resturant.forms import *
@@ -13,8 +13,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from accounts.models import *
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count 
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
+
 from .serializer import *
 from django.urls import reverse_lazy
 # @login_required
@@ -83,12 +82,14 @@ class DeleteItem(DeleteView):
 def resturant(request):
 	products = FoodMenu.objects.all()
 	food = Food.objects.all()
+	
 	context = {'products':products,"food":food}
 	return render(request, 'resturant.html', context)
 
 def product(request, pk):
 	product = FoodMenu.objects.get(id=pk)
 	food = Food.objects.get(food__id = pk)
+	
 	if request.method == 'POST':
 		# product = FoodMenu.objects.get(id=pk)
 		# flag = True
@@ -98,18 +99,16 @@ def product(request, pk):
 			print(request.user)
 		except:
 			device = request.COOKIES['device']
-			customer, created = Customer.objects.get_or_create(device=device,username=device)
-		# print(FoodMenu.objects.all().filter(id = pk).values_list('number').last()[0])
-
+			customer, created = Customer.objects.get_or_create(device=device,username=device , email = device+"@gmail.com")
+	
+		
 		if ((FoodMenu.objects.all().filter(id = pk).values_list('number').last())[0]>= int(request.POST['number'])):
 			flag = True
 			order, created = Order.objects.get_or_create(customer_id=customer, status="Order")
 			orderItem, created = OrderItem.objects.get_or_create(order_id=order, food_menu_id=product)
 			orderItem.number =request.POST['number']
 			orderItem.save()
-			# makeitcorrect =FoodMenu.objects.all().filter(id = pk).values_list('number').last()[0]  - int(request.POST['number'])
-			# product.number = makeitcorrect
-			# product.save()
+			
 			return redirect('cart')
 		else:
 				context = {'product':product, "food":food ,'msg':"we dont have enough"}
@@ -120,33 +119,37 @@ def product(request, pk):
 
 def cart(request):# باید بعدا درست شه
 	if request.method == 'POST':
-		if request.user.customer :
-			branch = Branch.objects.all().filter(foods__food__foodmenu__order_id__customer_id = request.user.customer)
-			orderitems = OrderItem.objects.filter(order_customer_id = request.user.customer)
-			total = sum([item.get_total for item in orderitems])
-			order, created = Order.objects.get_or_create(customer_id=request.user.customer)
-			order.total_price = total
-			order.branch = branch
-
+		if request.user.username :
+			
+			orderitems = OrderItem.objects.filter(order_id__status = "Order")
+			if orderitems:
+				one_of_foods_name = Food.objects.filter(food__foodmenu__order_id__customer_id__username = request.user.username).values_list("name" , flat=True)
+				q1 = Q(foods__food__foodmenu__order_id__status="Order")
+				q2 = Q(foods__name = one_of_foods_name)
+				# branch = Branch.objects.get( q1 & q2 )
+				total = sum([item.get_total for item in orderitems])
+				order = Order.objects.get(status = "Order")
+				order.total_price = total
+				order.status = "Peyment"
+				# order.branch = branch
+				order.save()
+				return render(request,"success.html")
 
 			
 	try:
 		customer = request.user.customer
-		device = request.COOKIES['device']
-		orderitems=OrderItem.objects.filter(order_id__customer_id__username=customer.username)
-		food = Food.objects.filter(food__foodmenu__order_id__customer_id__username=customer.username)
-		orders = Order.objects.filter(customer_id__username=customer.username)
-		customer_address = CustomerAdress.objects.filter(customer_address__username=customer.username)
+	
 
 	except:
-		customer_address = {}
 		device = request.COOKIES['device']
-		customer, created = Customer.objects.get_or_create(device=device ,username = device)
-		orderitems=OrderItem.objects.filter(order_id__customer_id__username=device)
-		food = Food.objects.filter(food__foodmenu__order_id__customer_id__username=device)
-		orders = Order.objects.filter(customer_id__username=device)
-	# order, created = Order.objects.get_or_create(customer_id=customer,status="Order")
-
+		customer = device
+		
+	
+	orderitems=OrderItem.objects.filter(order_id__customer_id__username=customer).filter(order_id__status = "Order")
+	food = Food.objects.filter(food__foodmenu__order_id__customer_id__username=customer)
+	orders = Order.objects.filter(customer_id__username=customer).filter(status = "Order")
+	customer_address = CustomerAdress.objects.filter(customer__username=customer)
 	context = {'order':orders,"orderitems": orderitems,"food":food,"address":customer_address}
+
 	return render(request, 'cart.html', context)
 

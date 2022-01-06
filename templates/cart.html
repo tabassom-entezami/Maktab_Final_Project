@@ -27,15 +27,15 @@
 							{%if user.is_authenticated %}
 							<form method="POST" action="">
 								{% csrf_token %}
-								<input class="btn btn-dark float-end" type="submit" value="check out">
+								<input class="btn btn-dark " type="submit" value="check out">
 								
-								<li class="nav-item dropdown">
+								<li class="nav-item dropdown float-end">
 									<a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">address</a>
 									<ul class="dropdown-menu" aria-labelledby="dropdown04">
 										{% for address in address %}
-									  <li><input class="dropdown-item" name="" href="{% url 'addfood' %}">add food</input></li>
+									  <li><input class="dropdown-item" type="" href="{% url 'addfood' %}">{{address.city}}, {{address.street}} , {{address.plaque}} </input></li>
 									  {% endfor %}
-									  <li><input class="dropdown-item" name="" href="{% url 'addfood' %}">add food</input></li>
+									  <li><a class="btn btn-dark " name="" href="{% url 'addaddress' %}">add address</a></li>
 									</ul>
 								  </li>
 								
@@ -81,7 +81,7 @@
 					<div class="col-2" ><p>${{item.get_total|floatformat:2}}</p></div>
 					
 					<div class="col-2"> 
-						<a href="{% url 'deleteitem' item.id %} "  class="btn btn-danger">remove</a>
+						<a href="{% url 'deleteitem' item.id %} " name = "deleteitem" class="btn btn-danger">remove</a>
 				   </div>
 					</div>
 				

@@ -10,7 +10,7 @@ class CustomUser(AbstractUser):
 
 class Customer(CustomUser):
     
-    customeraddress_id=models.ManyToManyField("CustomerAdress",related_name='customer_address')
+    address=models.ManyToManyField("Address",through="CustomerAdress",related_name='address')
     device = models.CharField(max_length=200, null=True, blank=True)
     class Meta:
         verbose_name="customer"
@@ -25,20 +25,33 @@ class Customer(CustomUser):
 
 
 class CustomerAdress(models.Model):
+
+    default = models.BooleanField(default=False)
+    customer=models.ForeignKey("Customer",on_delete=models.SET_NULL,null=True,related_name='customer')
+    address = models.ForeignKey("Address",on_delete=models.SET_NULL,null=True,related_name="customer_address")
+
     class Meta:
         ordering = ['pk']
-            
-
-    city = models.CharField(max_length=10)
-    street = models.CharField(max_length=10)
-    plaque = models.CharField(max_length=10)
+        verbose_name="customerAddress"
+    
 
     @staticmethod
     def has_default(customer):
-        for address in CustomerAdress.objects.filter(customer_id=customer):
+        for address in CustomerAdress.objects.filter(customer=customer):
             if address.default is True:
                 return True
         return False
+
+class Address(models.Model):
+    city = models.CharField(max_length=20)
+    street = models.CharField(max_length=20)
+    plaque = models.CharField(max_length=20)
+    
+    class Meta:
+        ordering = ['pk']
+
+    def __str__(self) -> str:
+        return self.city + self.street + self.plaque
 
 class Manager(CustomUser):
     class Meta:
@@ -50,6 +63,8 @@ class Manager(CustomUser):
             self.is_staff = True
             self.is_superuser = False
         return super(Manager,self).save(*args,**kwargs)
+     
+    
 
 class Admin(CustomUser):
     class Meta:

@@ -86,7 +86,7 @@ class FoodMenu(models.Model):
 
 class OrderItem(models.Model):
     order_id = models.ForeignKey('Order', on_delete=models.CASCADE ,related_name='order')
-    #اگه اوردر ایتم حذف شه اوردر هم حذف میشه
+    #اگه اوردر ایتم حذف شه اوردر هم حذف میشه # دقیقا برعکس نوشتم=))))
     food_menu_id = models.ForeignKey(FoodMenu, on_delete=models.SET_NULL,null=True, related_name='foodmenu')
     #اگه فود منو
     number = models.IntegerField(null=True,validators = [MinValueValidator(1)])
@@ -132,13 +132,13 @@ class Order(models.Model):
         
     )
     # order_count=models.IntegerField()
-    customer_id = models.ForeignKey(Customer, on_delete=models.CASCADE,  blank=True)
+    customer_id = models.ForeignKey(Customer, on_delete=models.SET_NULL,null=True , blank=True)
     # food_menu_id = models.ManyToManyField(FoodMenu)
     total_price=models.IntegerField( null=True)
     delivery_time=models.DateTimeField(auto_now=True)
     status=models.CharField(max_length=8, choices=ORDER_STATUS, default='Order')
     created_date=models.DateTimeField(auto_now_add=True)
-    customeraddress_id=models.ForeignKey(CustomerAdress,on_delete=models.CASCADE,null=True,related_name="custumer_address")
+    customeraddress_id=models.ForeignKey(CustomerAdress,on_delete=models.SET_NULL,null=True,related_name="custumer_address")
     # order_item_id = models.ManyToManyField(OrderItem, verbose_name="order_item",related_name="order_item_id")
     foodmenu_id=models.ManyToManyField(FoodMenu,through=OrderItem,related_name='food')
     branch = models.ForeignKey('Branch',on_delete=models.SET_NULL,null=True,related_name="delivery")

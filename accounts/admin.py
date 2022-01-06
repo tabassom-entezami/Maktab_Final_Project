@@ -9,18 +9,23 @@ admin.site.register(CustomUser,CustomUserAdmin)
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ['first_name', 'last_name', 'email']
-    list_display_links = ['email']
+    list_display = ['first_name', 'last_name', 'email' , "username"]
+    list_display_links = ['email',"username"]
     search_fields = ['email']
     
     def get_queryset(self, request):
             return Customer.objects.filter(is_staff=False)
 
 
-@admin.register(CustomerAdress)
-class CustomerAdressAdmin(admin.ModelAdmin):
+@admin.register(Address)
+class AdressAdmin(admin.ModelAdmin):
     list_display = ['city', 'street', 'plaque']
     search_fields = ['city']
+    empty_value_display = "---"
+
+@admin.register(CustomerAdress)
+class CustomerAdressAdmin(admin.ModelAdmin):
+    list_display = ['customer', 'address', 'default']
     empty_value_display = "---"
 
 @admin.register(Manager)
