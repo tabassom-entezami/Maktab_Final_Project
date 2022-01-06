@@ -1,20 +1,22 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block content %}
-
 {% block css %}
 <link rel="stylesheet" type="text/css" href="{% static 'assets/cart/css/main.css' %}">
 {% endblock css %}
-	<div class="row p-5">
+{% block content %}
+
+<center>
+	<div class="row p-5 d-flex justify-content-around ">
 		{% for product in products %}
-		<div class="d-inline"  >
+		<div class="   justify-content-center"  >
 			
 			
-			<img class="thumbnail d-inline" style="height: 200px; width: 200px; padding: 50px; border: 2px solid black;" src="{{ product.food_id.photo.url }}">
+			<img class="thumbnail " style="height: 200px; width: 200px; padding: 50px; border: 2px solid black;" src="{{ product.food_id.photo.url }}">
 			<div class="box-element product "  >
 				<h5><strong>{{product.food_id.name}}</strong></h5>
 				<h4 style="display: block; "><strong>${{product.price}}</strong></h4>
-				 <a class="btn btn-outline-success" href="{% url 'product' product.id %}">View Product</a>
+				<h2 style="display: inline;">from : </h2><h1 style="display: inline;">{{product.branch_id.name}}</h1>
+				 <a class="btn btn-outline-success d-block" href="{% url 'product' product.id %}">View Product</a>
 				
 				<div style="padding-top: 30px;" ></div>
 				
@@ -26,5 +28,5 @@
 		{% endfor %}	
 				
 	</div>
-	
+</center>
 {% endblock content %}

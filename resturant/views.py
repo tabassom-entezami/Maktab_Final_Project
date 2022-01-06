@@ -24,7 +24,7 @@ def home_page(re):
 	for i in foods_deliverd:
 		name = i.name
 		order_item_of_one_food= OrderItem.objects.all().filter(food_menu_id__food_id__name = name).aggregate(Count("number"))["number__count"]
-		# print(order_item_of_one_food)
+		
 		my_dict.update({i:order_item_of_one_food})
 	best_foods = dict(sorted(my_dict.items(), key=lambda item: item[1]))
 
@@ -107,7 +107,8 @@ def product(request, pk):
 			customer, created = Customer.objects.get_or_create(username = device,email=device+"@gmail.com",device=device )
 	
 		if (Order.objects.filter(customer_id=customer).filter(status="Order")):
-			if (FoodMenu.objects.filter(id = pk).values_list("branch_id__name").last())[0] != (Order.objects.filter(customer_id=customer).filter(status="Order").values_list("branch__name").first())[0]:
+			# print(FoodMenu.objects.filter(foodmenu__order_id__status="Order").filter(foodmenu__order_id__customer_id=customer).values_list("branch_id__name").last()[0],"___",FoodMenu.objects.filter(id = pk).values_list("branch_id__name").last()[0])	
+			if (FoodMenu.objects.filter(id = pk).values_list("branch_id__name").last())[0] == FoodMenu.objects.filter(foodmenu__order_id__status="Order").filter(foodmenu__order_id__customer_id=customer).values_list("branch_id__name").first()[0]:
 				if ((FoodMenu.objects.all().filter(id = pk).values_list('number').last())[0]>= int(request.POST['number'])):
 					flag = True
 					order, created = Order.objects.get_or_create(customer_id=customer, status="Order")
@@ -123,6 +124,7 @@ def product(request, pk):
 				context = {'product':product, "food":food ,'msg':"First remove all the foods from other branches"}
 				return render(request, 'product.html', context)
 		else:
+			print("hi")
 			if ((FoodMenu.objects.all().filter(id = pk).values_list('number').last())[0]>= int(request.POST['number'])):
 				order, created = Order.objects.get_or_create(customer_id=customer, status="Order")
 				orderItem, created = OrderItem.objects.get_or_create(order_id=order, food_menu_id=product)
@@ -158,7 +160,7 @@ def cart(request):# باید بعدا درست شه
 			
 	try:
 		customer = request.user.device
-		print(customer)
+		
 		orderitems=OrderItem.objects.filter(order_id__customer_id__email=customer).filter(order_id__status = "Order")
 		food = Food.objects.filter(food__foodmenu__order_id__customer_id__email=customer)
 		orders = Order.objects.filter(customer_id__email=customer).filter(status = "Order")

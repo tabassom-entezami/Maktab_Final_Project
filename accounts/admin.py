@@ -29,11 +29,17 @@ class CustomerAdressAdmin(admin.ModelAdmin):
     list_display_links = ['address']
     empty_value_display = "---"
 
+    def save_model(self, request, obj, form, change) -> None:
+        
+        obj.set_password(form.cleaned_data["password"])
+        obj.save
 @admin.register(Manager)
 class managerAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'email']
     search_fields = ['email']
     empty_value_display = "---"
+
+    
     def get_queryset(self, request):
         return Manager.objects.filter(is_staff=True, is_superuser=False)
 
