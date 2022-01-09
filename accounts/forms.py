@@ -9,9 +9,12 @@ from django.forms import fields
 from .models import * 
 class CostumRegisterForm(UserCreationForm):
     email = forms.EmailField(required=True)
+    city = forms.CharField(max_length=20,required=True)
+    street = forms.CharField(max_length=20,required=True)
+    plaque = forms.IntegerField(min_value=1,required=True)
     class Meta:
         model = Customer
-        fields = ( "username","email", "password1", "password2")
+        fields = ( "username","email", "city","street","plaque","password1", "password2",)
         widgets = { 
              'password': forms.PasswordInput(), 
                 } 
@@ -19,6 +22,9 @@ class CostumRegisterForm(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.email = self.cleaned_data['email']
+        # user.city = self.cleaned_data['city']
+        # user.street = self.cleaned_data['street']
+        # user.plaque = self.cleaned_data['plaque']
         # user.set_password(self.cleaned_data["password"]) 
         if commit:
             user.save()
@@ -45,7 +51,9 @@ class CostumRegisterForm1(UserCreationForm):
         if commit:
             user.save()
         return user
- 
+
+
+
 
 class Address(forms.Form):
     city = forms.CharField(max_length=150,label="city" , required=True)

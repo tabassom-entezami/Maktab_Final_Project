@@ -62,8 +62,20 @@
                 </ul>
               </li>
               {% endif %}
+              {% if user.is_authenticated and user.is_staff %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">resturant actions</a>
+                <ul class="dropdown-menu" aria-labelledby="dropdown04">
+                  <li><a class="dropdown-item" href="{% url 'restaurant_panel' %}">resturant panel</a></li>
+                
+                  
+                  
+                </ul>
+              </li>
+              {% endif %}
+
             </ul>
-            <form>
+            <form method="GET">
               <input class="form-control" type="text" placeholder="Search" aria-label="Search">
             </form>
           </div>

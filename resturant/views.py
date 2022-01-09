@@ -2,16 +2,17 @@ from django.db import models
 from django.db.models.expressions import OrderBy
 from django.db.models.aggregates import Count, Sum
 from django.db.models import Q
+from django.db.models.fields import Field
 from django.shortcuts import render, redirect
-from django.views.generic.edit import DeleteView,CreateView,UpdateView
+from django.views.generic.edit import DeleteView,CreateView,UpdateView 
 from resturant.forms import *
 from .models import *
 from accounts.models import *
 from django.views.decorators.http import require_POST
 from .decorators import *
-from django.contrib.messages.views import SuccessMessageMixin
+from django.views.generic import ListView
 from accounts.models import *
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required 
 from django.db.models import Count 
 
 from .serializer import *
@@ -20,6 +21,7 @@ from django.urls import reverse_lazy
 def home_page(re):
 	products = FoodMenu.objects.all().filter(number__gt=0)
 	foods_deliverd= Food.objects.all().filter(food__foodmenu__order_id__status = "Peyment")
+	branches = Branch.objects.all()
 	my_dict ={}
 	for i in foods_deliverd:
 		name = i.name
@@ -32,16 +34,18 @@ def home_page(re):
 
 	best_branchs = Branch.objects.filter(foods__food__foodmenu__order_id__status='Peyment').annotate(sums =Sum("foods__food__foodmenu__order_id__total_price") ).order_by("-sums")[:5]
 
-	context = {'products':products,"way2":best_foods,"best_foods":values,"best_branchs":best_branchs}
+	context = {'products':products,"way2":best_foods,"best_foods":values,"best_branchs":best_branchs,"branches":branches}
 	return render(re, "Home.html" , context)
 # Create your views here.
-
 
 
 def panel_admin(req):
 	foods = Food.objects.all()
 	content = {"foods": foods}
 	return render(req,"paneladmin.html",content)
+
+
+
 
 
 
@@ -97,8 +101,8 @@ def product(request, pk):
 		try:
 			device = request.COOKIES['device']
 			customer = request.user.email
-			our_customer = Customer.objects.get(device = device)
-			our_customer.email = customer
+			our_customer = Customer.objects.get(email = customer)
+
 			our_customer.device = device
 			our_customer.save
 			customer = our_customer
@@ -161,22 +165,71 @@ def cart(request):# باید بعدا درست شه faz3
 	try:
 		customer = request.user.device
 		
-		orderitems=OrderItem.objects.filter(order_id__customer_id__email=customer).filter(order_id__status = "Order")
-		food = Food.objects.filter(food__foodmenu__order_id__customer_id__email=customer)
-		orders = Order.objects.filter(customer_id__email=customer).filter(status = "Order")
-		customer_address = CustomerAdress.objects.filter(customer__email=customer)
-		context = {'order':orders,"orderitems": orderitems,"food":food,"address":customer_address}
+		
 
 	except:
 		device = request.COOKIES['device']
 		customer = device
 		
 		
-		orderitems=OrderItem.objects.filter(order_id__customer_id__device=customer).filter(order_id__status = "Order")
-		food = Food.objects.filter(food__foodmenu__order_id__customer_id__device=customer)
-		orders = Order.objects.filter(customer_id__device=customer).filter(status = "Order")
-		customer_address = CustomerAdress.objects.filter(customer__device=customer)
-		context = {'order':orders,"orderitems": orderitems,"food":food,"address":customer_address}
+	orderitems=OrderItem.objects.filter(order_id__customer_id__device=customer).filter(order_id__status = "Order")
+	food = Food.objects.filter(food__foodmenu__order_id__customer_id__device=customer)
+	orders = Order.objects.filter(customer_id__device=customer).filter(status = "Order")
+	customer_address = CustomerAdress.objects.filter(customer__device=customer)
+	print(customer_address)
+	context = {'order':orders,"orderitems": orderitems,"food":food,"address":customer_address}
 
 	return render(request, 'cart.html', context)
 
+
+
+def search(req):
+   
+    results=[]
+    if req.method == 'GET':
+        query = req.GET.get('search')
+        if query == '':
+            query = 'None'
+        results = FoodMenu.objects.filter(Q(food_id__name__icontains= query)| Q(branch_id__name__icontains=query))
+    context ={'query': query, 'results': results}
+    print(results)
+    return render(req, 'search.html', context)
+
+
+#panel Resturant
+
+
+
+class BranchUpdate(UpdateView):
+    model = Branch
+    template_name = "restaurant/branch_edit.html"
+    success_url = reverse_lazy('restaurant_panel')
+    fields= "__all__"
+
+class RestaurantCreate(CreateView):
+    model = Branch
+    template_name = "resturantPanel/branch_form.html"
+    success_url = reverse_lazy('create_menu')
+    fields = "__all__"
+
+class MenuCreate(CreateView):
+    model = FoodMenu
+    template_name = "resturantPanel/create_menu.html"
+    success_url = reverse_lazy('restaurant_panel')
+    fields = "__all__"
+
+def manager_menus(request):
+	manager_menus = FoodMenu.objects.all().filter(branch_id__manager_id__username= request.user.username)
+	return render(request,"resturantPanel/restaurantbranch.html",{"manager_menus":manager_menus})
+
+class MenuUpdate(UpdateView):
+    model = FoodMenu
+    template_name = "resturantPanel/edit_menu.html"
+    success_url = reverse_lazy('restaurant_panel')
+    fields = "__all__"
+
+class MenuDelete(DeleteView):
+    model = FoodMenu
+    template_name = "resturantPanel/delete_menu.html"
+    success_url = reverse_lazy('restaurant_panel')
+    fields = "__all__"

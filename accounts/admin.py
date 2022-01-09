@@ -12,7 +12,13 @@ class CustomerAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'email' , "username"]
     list_display_links = ['email',"username"]
     search_fields = ['email']
-    
+    fieldsets = (
+            (None, {
+                "fields": (
+                    'username','email','password'
+                ),
+            }),
+        )
     def get_queryset(self, request):
             return Customer.objects.filter(is_staff=False)
 
@@ -38,7 +44,13 @@ class managerAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'email']
     search_fields = ['email']
     empty_value_display = "---"
-
+    fieldsets = (
+            (None, {
+                "fields": (
+                    'username','email','password'
+                ),
+            }),
+        )
     
     def get_queryset(self, request):
         return Manager.objects.filter(is_staff=True, is_superuser=False)
@@ -54,7 +66,13 @@ class AdminProxyAdmin(admin.ModelAdmin):
     list_editable = ['email']
     search_fields = ['username', 'email']
     empty_value_display = "---"
-    
+    fieldsets = (
+            (None, {
+                "fields": (
+                    'username','email','password'
+                ),
+            }),
+        )
     def get_queryset(self, request):
         return Admin.objects.filter(is_superuser=True)
 

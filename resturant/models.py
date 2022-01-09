@@ -54,7 +54,7 @@ class Branch(Resturant):
 
 
 class Food(models.Model):
-    name=models.CharField(max_length=30)
+    name=models.CharField(max_length=30,unique=True)
     photo = models.ImageField(upload_to='image', null=True, blank=True, default=None)
     discreption=models.TextField(max_length=200)
     create_date=models.DateTimeField(auto_now_add=True)

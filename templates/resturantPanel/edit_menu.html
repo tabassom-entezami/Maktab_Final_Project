@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div id="contact_form">
+    <form id="food_form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="col-sm-12">
+            <div class=" form-group col-10 text-white">
+            {{form.as_p}}
+            </div>
+        </div>
+        <input id="button" class="sendButton m-5 p-3" type="submit"value='Edit Menu'>
+    </form>
+{% endblock content %}

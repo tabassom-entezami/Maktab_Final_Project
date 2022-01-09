@@ -16,7 +16,8 @@
 				<h5><strong>{{product.food_id.name}}</strong></h5>
 				<h4 style="display: block; "><strong>${{product.price}}</strong></h4>
 				<h2 style="display: inline;">from : </h2><h1 style="display: inline;">{{product.branch_id.name}}</h1>
-				 <a class="btn btn-outline-success d-block" href="{% url 'product' product.id %}">View Product</a>
+				<br>
+				 <a class="btn btn-outline-success d-inline-block" href="{% url 'product' product.id %}">View Product</a>
 				
 				<div style="padding-top: 30px;" ></div>
 				

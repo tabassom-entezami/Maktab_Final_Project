@@ -32,9 +32,13 @@
 								<li class="nav-item dropdown float-end">
 									<a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">address</a>
 									<ul class="dropdown-menu" aria-labelledby="dropdown04">
+										
+									  <li><select name="it_is" id="validationDefault05" required >
 										{% for address in address %}
-									  <li><input class="dropdown-item" type="" href="{% url 'addfood' %}">{{address.city}}, {{address.street}} , {{address.plaque}} </input></li>
-									  {% endfor %}
+										<option value="{{address.city}}{{address.street}}{{address.plaque}}" >{{address.city}}{{address.street}}{{address.plaque}}</option>
+										{% endfor %}
+									</select></li>
+									  
 									  <li><a class="btn btn-dark " name="" href="{% url 'addaddress' %}">add address</a></li>
 									</ul>
 								  </li>
