@@ -75,8 +75,10 @@
               {% endif %}
 
             </ul>
-            <form method="GET">
-              <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+            <form method="GET" action="{% url 'search' %}">
+              {% csrf_token %}
+              <input class="form-control" type="text" placeholder="search" aria-label="search" name="search">
+              <button type="submit" >go</button>
             </form>
           </div>
         </div>

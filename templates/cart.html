@@ -25,17 +25,17 @@
 						<th><h5>Total:<strong> ${{orderitems.get_cart_total|floatformat:2}}</strong></h5></th>
 						<th>
 							{%if user.is_authenticated %}
-							<form method="POST" action="">
+							<form method="POST" >
 								{% csrf_token %}
 								<input class="btn btn-dark " type="submit" value="check out">
 								
 								<li class="nav-item dropdown float-end">
-									<a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">address</a>
+									<a class="nav-link dropdown-toggle"  id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">address</a>
 									<ul class="dropdown-menu" aria-labelledby="dropdown04">
 										
-									  <li><select name="it_is" id="validationDefault05" required >
+									  <li><select name="customer_address" id="validationDefault05" required >
 										{% for address in address %}
-										<option value="{{address.city}}{{address.street}}{{address.plaque}}" >{{address.city}}{{address.street}}{{address.plaque}}</option>
+										<option value="{{address.id}}" >{{address.address.city}}{{address.address.street}}{{address.address.plaque}}</option>
 										{% endfor %}
 									</select></li>
 									  

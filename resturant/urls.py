@@ -14,7 +14,7 @@ urlpatterns = [
     path('fooddelete/<int:pk>/', DeleteFoodPanelAdmin.as_view() , name = "deletefood"),
     path('panel/', panel_admin , name ="paneladmin"),
     path('categoryadd/', AddCategoryPanelAdmin.as_view() , name = "addcategory"),
-  
+    path("search/" , search , name="search"),
     #پنل رستوران
     # path('branch/edit/<int:pk>/',BranchUpdate.as_view(),name="branch_edit"),
     path('branch_form/',RestaurantCreate.as_view(),name='branch_form'),

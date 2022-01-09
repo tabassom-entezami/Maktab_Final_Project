@@ -3,8 +3,8 @@
 {% block content %}
  
 <div class="container">
-   <a href="{% url 'home' %}" class="btn btn-primary  mb-2" style="margin-top: 10px">Back</a>
- {% if query %}
+   <a href="{% url 'Home' %}" class="btn btn-primary  mb-2" style="margin-top: 10px">Back</a>
+  {% if query %}
  
             <h2>
  
@@ -28,21 +28,21 @@
 						    {% for  result in results %}
 					        	<div class="col-md-12 col-lg-6 d-flex align-self-stretch">
 					        		<div class="menus d-sm-flex ftco-animate align-items-stretch">
-					              <div class="menu-img img rounded" style="background-image: url({{result.food.image.url}});"></div>
+					              <div class="menu-img img rounded" style="background-image: url({{result.food_id.photo.url}});"></div>
 					              <div class="text d-flex align-items-center">
 													<div>
 						              	<div class="d-flex">
 							                <div class="one-half">
-							                  <h3><a href="{% url 'food_detail' result.food.id %}">{{result.food}}</a></h3>
+							                  {% comment %} <h3><a href="{% url 'product' result.food.id %}">{{result.food_id}}</a></h3> {% endcomment %}
 							                </div>
 							                <div class="one-forth">
 							                  <span class="price">{{result.price}}</span>
 							                </div>
 							              </div>
-							              <p><span>Restaurant: {{result.menu.branch.name}}</p>
-										  <p><span>Branch: {{result.menu.branch.branch_name}}</p>
+							              <p><span>Restaurant: {{result.menu_id.branch_id.name}}</p>
+										  <p><span>Branch: {{result.menu.branch.name}}</p>
 											{% if not user.is_superuser %}
-							              <p><a href="{% url 'product' result.pk %}" class="btn btn-primary">Order now</a></p>
+							              {% comment %} <p><a href="{% url 'product' result.pk %}" class="btn btn-primary">Order now</a></p> {% endcomment %}
 										  {% endif %} 
 										</div>
 					              </div>
@@ -53,7 +53,7 @@
 					        </div>
 	              </div>
  
-   {% endif %}
+   {% endif %} 
  </div>
          
 

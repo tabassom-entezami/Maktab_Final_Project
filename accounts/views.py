@@ -85,7 +85,7 @@ def address_create(request):
 
         device = request.COOKIES['device']
         customer = request.user
-        customer  = Customer.objects.get(email = customer)
+        customer  = Customer.objects.get(email = customer.email)
         address  = Address.objects.create(city = city,street = street,plaque=int(plaque))
         if is_it == "True":
             edit , create = CustomerAdress.objects.filter(customer__email = customer.email).get_or_create(default =True)

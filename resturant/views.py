@@ -16,9 +16,18 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Count 
 
 from .serializer import *
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy , reverse
 # @login_required
 def home_page(re):
+	# results=[]
+	# if re.method == 'POST':
+	# 	query = re.GET.get('search')
+	# 	if query == '':
+	# 		query = 'None'
+	# 	results = FoodMenu.objects.filter(Q(food_id__name__icontains= query)| Q(branch_id__name__icontains=query))
+	# 	context ={'query': query, 'results': results}
+	# 	return render(re, 'search.html', context)
+	
 	products = FoodMenu.objects.all().filter(number__gt=0)
 	foods_deliverd= Food.objects.all().filter(food__foodmenu__order_id__status = "Peyment")
 	branches = Branch.objects.all()
@@ -36,6 +45,7 @@ def home_page(re):
 
 	context = {'products':products,"way2":best_foods,"best_foods":values,"best_branchs":best_branchs,"branches":branches}
 	return render(re, "Home.html" , context)
+
 # Create your views here.
 
 
@@ -45,7 +55,18 @@ def panel_admin(req):
 	return render(req,"paneladmin.html",content)
 
 
+def search(re):
+	results=[]
+	if re.method == "GET":
+		print("_________________________")
+		query = re.GET.get('search')
+		if query == '':
+			query = 'None'
+		results = FoodMenu.objects.filter(Q(food_id__name__icontains= query)| Q(branch_id__name__icontains=query ))
 
+	context ={'query': query, 'results': results}
+	print(results)
+	return render(re, 'search.html', context)
 
 
 
@@ -146,20 +167,23 @@ def product(request, pk):
 def cart(request):# باید بعدا درست شه faz3
 	if request.method == 'POST':
 		if request.user.email :
-			
 			orderitems = OrderItem.objects.filter(order_id__status = "Order")
 			if orderitems:
+				customer = request.user.email
+				adres = request.POST["customer_address"]
+				customer_addres = CustomerAdress.objects.get(id = adres)
 				one_of_foods_name = Food.objects.filter(food__foodmenu__order_id__customer_id__username = request.user.username).values_list("name" , flat=True)
-				q1 = Q(foods__food__foodmenu__order_id__status="Order")
-				q2 = Q(foods__name = one_of_foods_name)
-				# branch = Branch.objects.get( q1 & q2 )
+				branch = Branch.objects.filter(branch_id__foodmenu__order_id__customer_id__email = customer)
 				total = sum([item.get_total for item in orderitems])
 				order = Order.objects.get(status = "Order")
 				order.total_price = total
 				order.status = "Peyment"
-				# order.branch = branch
+				order.branch = branch
+				order.customeraddress_id = customer_addres
 				order.save()
 				return render(request,"success.html")
+			else:
+    				return reverse("cart")	
 
 			
 	try:
@@ -175,7 +199,7 @@ def cart(request):# باید بعدا درست شه faz3
 	orderitems=OrderItem.objects.filter(order_id__customer_id__device=customer).filter(order_id__status = "Order")
 	food = Food.objects.filter(food__foodmenu__order_id__customer_id__device=customer)
 	orders = Order.objects.filter(customer_id__device=customer).filter(status = "Order")
-	customer_address = CustomerAdress.objects.filter(customer__device=customer)
+	customer_address = CustomerAdress.objects.all()
 	print(customer_address)
 	context = {'order':orders,"orderitems": orderitems,"food":food,"address":customer_address}
 
@@ -183,17 +207,9 @@ def cart(request):# باید بعدا درست شه faz3
 
 
 
-def search(req):
-   
-    results=[]
-    if req.method == 'GET':
-        query = req.GET.get('search')
-        if query == '':
-            query = 'None'
-        results = FoodMenu.objects.filter(Q(food_id__name__icontains= query)| Q(branch_id__name__icontains=query))
-    context ={'query': query, 'results': results}
-    print(results)
-    return render(req, 'search.html', context)
+
+
+
 
 
 #panel Resturant
