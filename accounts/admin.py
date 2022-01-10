@@ -25,19 +25,17 @@ class CustomerAdmin(admin.ModelAdmin):
 
 @admin.register(Address)
 class AdressAdmin(admin.ModelAdmin):
-    list_display = ['city', 'street', 'plaque']
+    list_display = ['city', 'street', 'plaque',"id"]
     search_fields = ['city']
     empty_value_display = "---"
 
 @admin.register(CustomerAdress)
 class CustomerAdressAdmin(admin.ModelAdmin):
-    list_display = ['customer', 'address', 'default']
+    list_display = ['customer', 'address', 'default',"id"]
     list_display_links = ['address']
     empty_value_display = "---"
 
-    def save_model(self, request, obj, form, change) -> None:
-        obj.set_password(form.cleaned_data["password"])
-        obj.save
+    
 @admin.register(Manager)
 class managerAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'email']

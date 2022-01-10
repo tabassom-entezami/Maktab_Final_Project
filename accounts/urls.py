@@ -7,7 +7,8 @@ urlpatterns = [
     path("login/", login_request , name="login"),
     path("addaddress/",address_create,name = "addaddress"),
     path("logout/", logout_request, name= "logout"),
-
+    path("change_address/<int:pk>/",change_default_address,name="change"),
+    path("delete_address/<int:pk>/",delete_address,name="delete_address"),
 
     
     ]

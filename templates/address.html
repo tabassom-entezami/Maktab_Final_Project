@@ -2,6 +2,9 @@
 
 {% block content %}
 <div class="container">
+    {% if msg %}
+          <h1>{{msg}}</h1>
+    {% endif %}
     <h2 class="text-black-50">Add Address</h2>
     <form method="POST">
         {% csrf_token %}

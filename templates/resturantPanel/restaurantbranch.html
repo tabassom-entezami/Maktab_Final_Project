@@ -45,4 +45,41 @@
 </div>
 </article>
 
+<section>
+    <h2>Orders history</h2>
+
+    <div class="box-element">
+        <div class="cart-row d-flex ">
+
+            <div class="col-2"></div>
+            <div class="col-2"><strong>status</strong></div>
+            <div class="col-2"><strong>price</strong></div>
+            <div class="col-1"><strong>create time </strong></div>
+            <div class="col-2"><strong>customer </strong></div>
+            
+            
+
+        </div>
+        <hr>
+        {% for item in orders %}
+        <div class="cart-row d-flex">
+            
+            
+            <div class="col-2"></div>
+            
+            <div class="col-2"><p>{{item.status}}</p></div>
+            <div class="col-2"><p>${{item.total_price|floatformat:2}}</P></div>
+            <div class="col-1"><p class="quantity">{{item.created_date}}</p></div>
+            <div class="col-2" ><p>{{item.customer_id}}</p></div>
+            
+            
+            </div>
+        
+        </div>
+        {% endfor %}
+    </div>
+
+</section>
+
+
 {%endblock content%}

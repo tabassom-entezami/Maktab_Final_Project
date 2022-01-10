@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+{% load static %}
+{% if msg %}
+    <h1>{{msg}}</h1>
+{% endif %}
+<section>
+    
+  <center> <h2>Orders history</h2></center> 
+
+    <div class="box-element">
+        <div class="cart-row d-flex ">
+
+            <div class="col-2"></div>
+            <div class="col-2"><strong>status</strong></div>
+            <div class="col-2"><strong>price</strong></div>
+            <div class="col-1"><strong>create time </strong></div>
+            <div class="col-2"><strong>branch</strong></div>
+            
+            
+
+        </div>
+        <hr>
+        {% for item in orders %}
+        <div class="cart-row d-flex">
+            
+            
+            <div class="col-2"></div>
+            
+            <div class="col-2"><p>{{item.status}}</p></div>
+            <div class="col-2"><p>${{item.total_price|floatformat:2}}</P></div>
+            <div class="col-1"><p class="quantity">{{item.created_date.date}}</p></div>
+            <div class="col-2" ><p>{{item.branch.name}}</p></div>
+            
+            
+            </div>
+        
+        </div>
+        {% endfor %}
+    </div>
+<div style="height: 100px; width: 100px;"></div>
+</section>
+<div class="box-element">
+    <div class="cart-row d-flex">
+        <div class="col-2"></div>
+        <div class="col-3"><strong>city</strong></div>
+        <div class="col-2"><strong>street</strong></div>
+        <div class="col-1"><strong>plaque</strong></div>
+        
+         
+
+    </div>
+    <hr>
+    {% for item in address %}
+    <div class="cart-row d-flex">
+        
+        <div class = "col-2"></div>
+        {% comment %} <div  ><img class="row-image" style=" border:10px solid black; height: 100px; width: 100px;" src="{{ item.food_menu_id.food_id.photo.url }}"></div>   {% endcomment %}
+        
+        <div class="col-3"><p>{{item.city}}</p></div>
+        <div class="col-2"><p>{{item.street}}</P></div>
+        <div class="col-1"><p >{{item.plaque}}</p></div>
+        
+        
+        <a href="{% url 'delete_address' item.id %} "   class="btn btn-danger" type="submit">remove</a>
+
+          
+        <a href="{% url 'change' item.id %} "  class="btn btn-danger" type="submit">change address to default</a>
+        
+        </div>
+    
+    </div>
+    {% endfor %}
+</div>
+
+{%endblock content%}

@@ -5,6 +5,7 @@ from django.db.models.aggregates import Count, Sum
 from django.db.models import Q
 from django.db.models.fields import Field
 from django.shortcuts import render, redirect
+from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView,CreateView,UpdateView 
 from resturant.forms import *
@@ -21,17 +22,9 @@ from .serializer import *
 from django.urls import reverse_lazy , reverse
 # @login_required
 def home_page(re):
-	# results=[]
-	# if re.method == 'POST':
-	# 	query = re.GET.get('search')
-	# 	if query == '':
-	# 		query = 'None'
-	# 	results = FoodMenu.objects.filter(Q(food_id__name__icontains= query)| Q(branch_id__name__icontains=query))
-	# 	context ={'query': query, 'results': results}
-	# 	return render(re, 'search.html', context)
 	
 	products = FoodMenu.objects.all().filter(number__gt=0)
-	foods_deliverd= Food.objects.all().filter(food__foodmenu__order_id__status = "Peyment")
+	foods_deliverd= Food.objects.all().exclude(food__foodmenu__order_id__status = "Order")
 	branches = Branch.objects.all()
 	my_dict ={}
 	for i in foods_deliverd:
@@ -180,7 +173,6 @@ def cart(request):# باید بعدا درست شه faz3
 				device = request.COOKIES['device']
 				adres = request.POST["customer_address"]
 				customer_addres = CustomerAdress.objects.get(id = adres)
-				# one_of_foods_name = FoodMenu.objects.filter(foodmenu__order_id__customer_id__username = request.user.username).values_list("id" , flat=True)
 				branch_id = FoodMenu.objects.filter(foodmenu__order_id__status="Order").filter(foodmenu__order_id__customer_id__device=device).values_list("branch_id__id").first()[0]
 				branch = Branch.objects.get(id = branch_id )
 				total = sum([item.get_total for item in orderitems])
@@ -221,9 +213,6 @@ def cart(request):# باید بعدا درست شه faz3
 
 
 #panel Resturant
-
-
-
 class BranchUpdate(UpdateView):
     model = Branch
     template_name = "restaurant/branch_edit.html"
@@ -246,7 +235,8 @@ def manager_menus(request):
 	manager_menus = FoodMenu.objects.all().filter(branch_id__manager_id__username= request.user.username)
 	branch = Branch.objects.get(manager_id__username = request.user.username)
 	manager = Manager.objects.get(username = request.user.username)
-	return render(request,"resturantPanel/restaurantbranch.html",{"manager_menus":manager_menus , "branches" : branch , "manager":manager})
+	orders = Order.objects.filter(branch__manager_id__username = request.user.username).exclude(status = "Order")
+	return render(request,"resturantPanel/restaurantbranch.html",{"manager_menus":manager_menus , "branches" : branch , "manager":manager ,"orders":orders})
 
 class MenuUpdate(UpdateView):
     model = FoodMenu
@@ -276,5 +266,21 @@ class ManagerEdit(UpdateView):
 	model = Manager
 	template_name = "resturantPanel/manager_edit.html"
 	success_url = reverse_lazy('restaurant_panel')
-	fields = ["first_name","last_name","username"]
+	fields = ["first_name","last_name","username","password"]
 	
+
+
+class CustomerPanel(TemplateView):
+	template_name = "customerPanel/customer_panel.html"
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["orders"] = Order.objects.filter(customer_id__username = self.request.user.username)
+		context["address"] = Address.objects.filter(customer_address__customer__username = self.request.user.username)
+		return context
+
+
+class CustomerEdit(UpdateView):
+	model = Customer
+	template_name = "customerPanel/customer_edit.html"
+	fields = ["first_name","last_name","username","password"]
+	success_url = reverse_lazy('customer_panel')

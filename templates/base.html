@@ -73,6 +73,11 @@
                 </ul>
               </li>
               {% endif %}
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'customer_panel' %}">panel</a>
+              </li>
+              {%endif%}
 
             </ul>
             <form method="GET" action="{% url 'search' %}">

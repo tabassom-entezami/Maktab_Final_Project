@@ -1,5 +1,7 @@
 from os import name
 from django.urls import path
+
+from accounts.views import delete_address
 from .views import *
 
 urlpatterns = [
@@ -25,5 +27,8 @@ urlpatterns = [
     path("create_menu/",MenuCreate.as_view(),name="create_menu"),
     path("delete_menu/<int:pk>/",MenuDelete.as_view(),name="delete_menu"),
     path("edit_menu/<int:pk>/",MenuUpdate.as_view(),name="edit_menu"),
+
+    #پنل مشتری
+    path("yourPanel/",CustomerPanel.as_view(),name="customer_panel")  
     
 ]

@@ -10,7 +10,7 @@ from django.views.generic.edit import DeleteView,CreateView,UpdateView
 from django.contrib.auth.forms import AuthenticationForm 
 from django.contrib.auth import login, authenticate ,logout
 from django.contrib import messages
-
+from resturant.models import *
 
 def login_request(request):
     if request.method == "POST":
@@ -79,8 +79,6 @@ def address_create(request):
         street = request.POST['street']
         plaque = request.POST['plaque']
         is_it = request.POST["it_is"]
-
-        device = request.COOKIES['device']
         customer = request.user
         customer  = Customer.objects.get(email = customer.email)
         address  = Address.objects.create(city = city,street = street,plaque=int(plaque))
@@ -95,3 +93,25 @@ def address_create(request):
     return render(request , "address.html")
 
 
+
+
+def delete_address(request,pk):
+    if CustomerAdress.objects.filter(custumer_address__id = pk).values_list("default") != True :
+        msg = "this is your default address you can't remove it"
+        return render(request,"customerPanel/customer_panel.html",{"msg":msg})
+    else:
+        address_to_remove = CustomerAdress.objects.get(custumer_address__id = pk)
+        address_to_remove.delete()
+        return render(request,"customerPanel/customer_panel.html",{"msg":"address deleted"})
+
+
+def change_default_address(request,pk):
+    # if request.method == "POST":
+        edit  = CustomerAdress.objects.filter(customer__username = request.user.username).get(default = True )
+        edit.default = False
+        edit.save()
+        customeraddress = CustomerAdress.objects.get(address__id = pk)
+        customeraddress.defualt = True
+        customeraddress.save()
+        return render(request,"customerPanel/customer_panel.html",{"msg":"your default change"})
+ 
