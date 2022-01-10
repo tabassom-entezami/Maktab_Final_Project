@@ -1,9 +1,11 @@
 from django.db import models
+from django.db.models import fields
 from django.db.models.expressions import OrderBy
 from django.db.models.aggregates import Count, Sum
 from django.db.models import Q
 from django.db.models.fields import Field
 from django.shortcuts import render, redirect
+from django.views.generic.detail import DetailView
 from django.views.generic.edit import DeleteView,CreateView,UpdateView 
 from resturant.forms import *
 from .models import *
@@ -58,14 +60,14 @@ def panel_admin(req):
 def search(re):
 	results=[]
 	if re.method == "GET":
-		print("_________________________")
+		
 		query = re.GET.get('search')
 		if query == '':
 			query = 'None'
 		results = FoodMenu.objects.filter(Q(food_id__name__icontains= query)| Q(branch_id__name__icontains=query ))
 
 	context ={'query': query, 'results': results}
-	print(results)
+	
 	return render(re, 'search.html', context)
 
 
@@ -123,15 +125,21 @@ def product(request, pk):
 			device = request.COOKIES['device']
 			customer = request.user.email
 			our_customer = Customer.objects.get(email = customer)
-
+			if Customer.objects.get(username = device):
+				have_to_delete = Customer.objects.get(username = device)
+				have_to_delete.delete()
 			our_customer.device = device
-			our_customer.save
+			our_customer.save()
 			customer = our_customer
+
+			
+
+
 		except:
 			device = request.COOKIES['device']
 			customer, created = Customer.objects.get_or_create(username = device,email=device+"@gmail.com",device=device )
 	
-		if (Order.objects.filter(customer_id=customer).filter(status="Order")):
+		if (Order.objects.filter(customer_id=customer).filter(status="Order") and FoodMenu.objects.filter(foodmenu__order_id__status="Order").filter(foodmenu__order_id__customer_id=customer)):
 			# print(FoodMenu.objects.filter(foodmenu__order_id__status="Order").filter(foodmenu__order_id__customer_id=customer).values_list("branch_id__name").last()[0],"___",FoodMenu.objects.filter(id = pk).values_list("branch_id__name").last()[0])	
 			if (FoodMenu.objects.filter(id = pk).values_list("branch_id__name").last())[0] == FoodMenu.objects.filter(foodmenu__order_id__status="Order").filter(foodmenu__order_id__customer_id=customer).values_list("branch_id__name").first()[0]:
 				if ((FoodMenu.objects.all().filter(id = pk).values_list('number').last())[0]>= int(request.POST['number'])):
@@ -169,11 +177,12 @@ def cart(request):# باید بعدا درست شه faz3
 		if request.user.email :
 			orderitems = OrderItem.objects.filter(order_id__status = "Order")
 			if orderitems:
-				customer = request.user.email
+				device = request.COOKIES['device']
 				adres = request.POST["customer_address"]
 				customer_addres = CustomerAdress.objects.get(id = adres)
-				one_of_foods_name = Food.objects.filter(food__foodmenu__order_id__customer_id__username = request.user.username).values_list("name" , flat=True)
-				branch = Branch.objects.filter(branch_id__foodmenu__order_id__customer_id__email = customer)
+				# one_of_foods_name = FoodMenu.objects.filter(foodmenu__order_id__customer_id__username = request.user.username).values_list("id" , flat=True)
+				branch_id = FoodMenu.objects.filter(foodmenu__order_id__status="Order").filter(foodmenu__order_id__customer_id__device=device).values_list("branch_id__id").first()[0]
+				branch = Branch.objects.get(id = branch_id )
 				total = sum([item.get_total for item in orderitems])
 				order = Order.objects.get(status = "Order")
 				order.total_price = total
@@ -182,14 +191,13 @@ def cart(request):# باید بعدا درست شه faz3
 				order.customeraddress_id = customer_addres
 				order.save()
 				return render(request,"success.html")
-			else:
-    				return reverse("cart")	
-
+			
 			
 	try:
 		customer = request.user.device
-		
-		
+		if Customer.objects.get(username = request.user.device):
+			have_to_delete = Customer.objects.get(username = request.user.device)
+			have_to_delete.delete()
 
 	except:
 		device = request.COOKIES['device']
@@ -236,7 +244,9 @@ class MenuCreate(CreateView):
 
 def manager_menus(request):
 	manager_menus = FoodMenu.objects.all().filter(branch_id__manager_id__username= request.user.username)
-	return render(request,"resturantPanel/restaurantbranch.html",{"manager_menus":manager_menus})
+	branch = Branch.objects.get(manager_id__username = request.user.username)
+	manager = Manager.objects.get(username = request.user.username)
+	return render(request,"resturantPanel/restaurantbranch.html",{"manager_menus":manager_menus , "branches" : branch , "manager":manager})
 
 class MenuUpdate(UpdateView):
     model = FoodMenu
@@ -249,3 +259,22 @@ class MenuDelete(DeleteView):
     template_name = "resturantPanel/delete_menu.html"
     success_url = reverse_lazy('restaurant_panel')
     fields = "__all__"
+
+
+class Branches(DetailView):
+	model = Branch
+	template_name = "branch_detail.html"
+	fields ="__all__"
+
+class BranchEdit(UpdateView):
+	model = Branch
+	template_name = "resturantPanel/branch_edit.html"
+	success_url = reverse_lazy('restaurant_panel')
+	fields = ["name","category_id","address","city","discreption","is_open"]
+
+class ManagerEdit(UpdateView):
+	model = Manager
+	template_name = "resturantPanel/manager_edit.html"
+	success_url = reverse_lazy('restaurant_panel')
+	fields = ["first_name","last_name","username"]
+	

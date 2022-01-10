@@ -12,7 +12,7 @@ from django.contrib.auth import login, authenticate ,logout
 from django.contrib import messages
 
 
-def login_request(request , username = None ):
+def login_request(request):
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -57,15 +57,12 @@ def sign_up_view(request):
 def sign_up_manager_view (request):
     form = CostumRegisterForm1()
     if request.method == "POST":
-        form = CostumRegisterForm(request.POST)
-        if form.is_valid():
+        form = CostumRegisterForm1(request.POST)
+        if form.is_valid() and request.POST["password"] and request.POST["password2"] and request.POST["password"] == request.POST["password2"]:
             form = form.save()
-            customer = manager.objects.get(username = request.POST["username"] )
-            address ,create= Address.objects.get_or_create(city = request.POST["city"],street =request.POST["street"],plaque = request.POST["plaque"])
-            address.save()
-            customeraddress ,create= CustomerAdress.objects.get_or_create(customer = customer,address=address,default = True)
-            customeraddress.save()
             return redirect("Home")
+        return render(request , "registration/signupmanager.html" , {"form":form,"msg":"something went wrong"})
+
     return render(request , "registration/signupmanager.html" , {"form":form})
 
 
@@ -96,3 +93,5 @@ def address_create(request):
             customeraddress = CustomerAdress.objects.create(customer = customer , address = address,default=False)
         return redirect("cart")
     return render(request , "address.html")
+
+

@@ -3,7 +3,7 @@
 {% block content %}
  
 <div class="container">
-   <a href="{% url 'Home' %}" class="btn btn-primary  mb-2" style="margin-top: 10px">Back</a>
+   <a href="{% url 'Home' %}" class="btn btn-primary  mb-2" style="margin-top: 10px">Home</a>
   {% if query %}
  
             <h2>
@@ -16,46 +16,33 @@
  
             </h2>
  
-   		<section class="ftco-section" style="padding: 3em 0;" >
-    	<div class="container">
-        <div class="ftco-search">
-	          <div class="col-md-12 tab-wrap">
-	            
-	            <div class="tab-content" id="v-pills-tabContent">
-
-	              <div class="tab-pane fade show active" id="v-pills-1" role="tabpanel" aria-labelledby="day-1-tab">
-	              	<div class="row no-gutters d-flex align-items-stretch">
-						    {% for  result in results %}
-					        	<div class="col-md-12 col-lg-6 d-flex align-self-stretch">
-					        		<div class="menus d-sm-flex ftco-animate align-items-stretch">
-					              <div class="menu-img img rounded" style="background-image: url({{result.food_id.photo.url}});"></div>
-					              <div class="text d-flex align-items-center">
-													<div>
-						              	<div class="d-flex">
-							                <div class="one-half">
-							                  {% comment %} <h3><a href="{% url 'product' result.food.id %}">{{result.food_id}}</a></h3> {% endcomment %}
-							                </div>
-							                <div class="one-forth">
-							                  <span class="price">{{result.price}}</span>
-							                </div>
-							              </div>
-							              <p><span>Restaurant: {{result.menu_id.branch_id.name}}</p>
-										  <p><span>Branch: {{result.menu.branch.name}}</p>
-											{% if not user.is_superuser %}
-							              {% comment %} <p><a href="{% url 'product' result.pk %}" class="btn btn-primary">Order now</a></p> {% endcomment %}
-										  {% endif %} 
-										</div>
-					              </div>
-					            </div>
-					        	</div>
-						    {% endfor %}
-					        </div>
-					        </div>
-	              </div>
- 
-   {% endif %} 
+            <center>
+                <div class="row p-5 d-flex justify-content-around ">
+                    {% for product in results %}
+                    <div class=" box-element d-flex p-1  "  >
+                        
+                        
+                        <img class="thumbnail rounded d-flex" style="height: 200px; width: 200px; padding: 50px; border: 2px solid black;" src="{{ product.food_id.photo.url }}">
+                        <div class="box-element product  "  >
+                            <h5><strong>{{product.food_id.name}}</strong></h5>
+                            <h4 style="display: block;  " ><strong>${{product.price}}</strong></h4>
+                            <h2 style="display: inline;">from : </h2><h1 style="display: inline;">{{product.branch_id.name}}</h1>
+                            <br>
+                             <a class="btn btn-outline-success d-inline-block" href="{% url 'product' product.id %}">View Product</a>
+                            
+                            <div style="padding-top: 30px;" ></div>
+                            
+                            
+                        </div>
+                    </div>
+                    <hr>
+                        
+                    {% endfor %}	
+                            
+                </div>
+            </center>
  </div>
-         
+       {% endif %}  
 
 
 

@@ -15,8 +15,11 @@ urlpatterns = [
     path('panel/', panel_admin , name ="paneladmin"),
     path('categoryadd/', AddCategoryPanelAdmin.as_view() , name = "addcategory"),
     path("search/" , search , name="search"),
+    path("branch/<int:pk>",Branches.as_view() , name = "branches" ),
+    
     #پنل رستوران
-    # path('branch/edit/<int:pk>/',BranchUpdate.as_view(),name="branch_edit"),
+    path("manager/edit/<int:pk>" , ManagerEdit.as_view(),name = "manager_edit"),
+    path('branch/edit/<int:pk>/',BranchEdit.as_view(),name="branch_edit"),
     path('branch_form/',RestaurantCreate.as_view(),name='branch_form'),
     path('restaurant_panel',manager_menus,name="restaurant_panel"),
     path("create_menu/",MenuCreate.as_view(),name="create_menu"),

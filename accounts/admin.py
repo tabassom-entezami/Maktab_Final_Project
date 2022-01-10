@@ -36,12 +36,12 @@ class CustomerAdressAdmin(admin.ModelAdmin):
     empty_value_display = "---"
 
     def save_model(self, request, obj, form, change) -> None:
-        
         obj.set_password(form.cleaned_data["password"])
         obj.save
 @admin.register(Manager)
 class managerAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'email']
+    list_display_links = ["email"]
     search_fields = ['email']
     empty_value_display = "---"
     fieldsets = (

@@ -3,7 +3,7 @@
 {% block content %}
 
 
-<article id="content" class="col-11 ">
+<article id="content" class="col-11 p-5 ">
 	<div class="wrap">
 {% for m in manager_menus %}
     {% if user.is_authenticated and user.is_staff%}
@@ -11,32 +11,36 @@
     <div class=" d-flex  justify-content-center"  >
 			
 			
-        <img class="thumbnail " style="height: 200px; width: 200px; padding: 50px; border: 2px solid black;" src="{{ m.food_id.photo.url }}">
+        <img class="thumbnail " style="height: 200px; width: 200px; padding: 50px; border: 2px solid black; margin-right: 100px;" src="{{ m.food_id.photo.url }}">
         <div class="box-element product "  >
             <h5><strong>{{m.food_id.name}}</strong></h5>
             <h4 style="display: block; "><strong>${{m.price}}</strong></h4>
             <h2 style="display: inline;">from : </h2><h1 style="display: inline;">{{m.branch_id.name}}</h1>
             <br>
+            
              <a class="btn btn-outline-success d-inline-block" href="{% url 'product' m.id %}">View Product</a> 
             
             <div style="padding-top: 30px;" ></div>
             
             
         </div>
+       
     </div>
+    <a class="btn btn-outline-dark d-inline-block" href="{% url 'delete_menu' m.id %}">delete menu</a> 
+    <a class="btn btn-outline-dark d-inline-block" href="{% url 'edit_menu' m.id %}">edit menu</a> 
     <hr>
         
 
-        <a href="{% url 'delete_menu' m.id %}" class="button1">Delete</a>
-        <a href="{% url 'edit_menu' m.id %}" class="button1">Edit</a>
-        
+    
 
         </div>
         </div></section>
     {%endif%}
 {%endfor%} 
 {% if user.is_authenticated and user.is_staff%}
-    <a href="{% url 'create_menu'  %}" class="button1">add a food</a>
+    <a href="{% url 'create_menu'  %}" class="btn btn-outline-dark d-inline-block" >add a food</a>
+    <a href="{% url 'branch_edit' branches.id %}" class="btn btn-outline-dark d-inline-block" >edit your branch</a>
+    <a href="{% url 'manager_edit' manager.id %}" class="btn btn-outline-dark d-inline-block" >edit your information</a>
 {%endif%}
 </div>
 </article>

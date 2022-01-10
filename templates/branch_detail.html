@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block title %}Branch Details{% endblock title %}
+
+
+{% block content %}
+{% load static %}
+<section class="ftco-section ftco-wrap-about">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-5 wrap-about pt-5 pt-md-5 pb-md-3 ftco-animate">
+      <div class="heading-section mb-4 my-5 my-md-0">
+          <span class="subheading">About</span>
+        
+        <h1 class="mb-4">Branch {{branch.name}} </h1>
+      </div>
+      <p>A small river named Duden flows by their place and supplies it with the necessary regelialia. It is a paradisematic country, in which roasted parts of sentences fly into your mouth.</p>
+                <pc class="time">
+                    <span>Mon - Fri <strong>24 hour</strong></span>
+                    <span>Address <strong>{{branch.address}}</strong></span>
+                    <span><a href="#">{{branch.created_at_jalali.date}}</a></span>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="ftco-section bg-light">
+    <div class="container">
+        <div class="row justify-content-center mb-5 pb-2">
+    <div class="col-md-12 text-center heading-section ftco-animate">
+      <span class="subheading">Category</span>
+    <h2 class="mb-4">{{branch.category_id.type}}</h2>
+        </div>
+    </div>
+    </div>
+<div class="container">
+    <div class="row">
+        {% for m in branch.branch_id.all %} 
+        <div class="col-md-4 ftco-animate">
+            
+            <div class="blog-entry">
+                <img src="{{ m.food_id.photo.url }}" class="menu-img" style="height: 350px; width: 350px;" alt="">
+                <a href="blog-single.html" class="block-20" style="background-image: url({{m.food_id.photo.url}});"></a>  
+            <div class="text pt-3 pb-4 px-4">
+                <div class="meta">
+                
+                </div>
+                <h3 class="heading">{{m.food_id.name}}</h3>
+                <p class="clearfix">
+                <h4 href="#" class="float-left read">${{m.price}} </h4>
+                </p>
+                <form method="POST" action="{% url 'product' m.id %}">
+                    {% csrf_token %}
+                    <input min="1" value=1 type="number" name="number">
+                    <input class="btn btn-dark" type="submit" value="Add to Cart">
+                </form>
+            </div>
+            </div>
+        </div>
+        {% endfor %} 
+    </div>
+</div>
+</section>
+
+
+{% endblock content %}
