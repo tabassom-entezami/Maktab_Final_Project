@@ -73,7 +73,7 @@
                 </ul>
               </li>
               {% endif %}
-              {% if user.is_authenticated %}
+              {% if user.is_authenticated  and not user.is_staff%}
               <li class="nav-item">
                 <a class="nav-link" href="{% url 'customer_panel' %}">panel</a>
               </li>
@@ -82,8 +82,14 @@
             </ul>
             <form method="GET" action="{% url 'search' %}">
               {% csrf_token %}
-              <input class="form-control" type="text" placeholder="search" aria-label="search" name="search">
-              <button type="submit" >go</button>
+              <input class="form-control" type="text" placeholder="search" aria-label="search" name="search" >
+              <!-- <button type="submit" >go</button> -->
+            </form>
+
+            <form method="GET" action="{% url 'search' %}">
+              {% csrf_token %}
+              <input class="form-control" type="text" placeholder="search2" aria-label="search" name="search2" id = "searchInput">
+              <!-- <button type="submit" >go</button> -->
             </form>
           </div>
         </div>
@@ -127,7 +133,8 @@
           }
           return cookieValue;
       }
-  
+
+    
   
       function uuidv4() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
@@ -146,6 +153,7 @@
       }
   
       document.cookie ='device=' + device + ";domain=;path=/"
+      
   
     </script>
   

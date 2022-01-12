@@ -11,6 +11,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, authenticate ,logout
 from django.contrib import messages
 from resturant.models import *
+from resturant.decorators import *
+from django.contrib.auth.decorators import login_required 
+
 
 def login_request(request):
     if request.method == "POST":
@@ -32,7 +35,7 @@ def login_request(request):
     form = AuthenticationForm()
     return render(request=request, template_name="registration/login.html", context={"login_form":form})
 
-
+@login_required
 def logout_request(request):
     logout(request)
     messages.info(request, "You have successfully logged out.") 
@@ -72,7 +75,7 @@ class LoginView(generic.CreateView):
     template_name = 'registration/login.html'
 
 
-
+@login_required
 def address_create(request):
     if request.method == 'POST':
         city = request.POST['city']
@@ -94,24 +97,39 @@ def address_create(request):
 
 
 
-
+@login_required
 def delete_address(request,pk):
-    if CustomerAdress.objects.filter(custumer_address__id = pk).values_list("default") != True :
-        msg = "this is your default address you can't remove it"
-        return render(request,"customerPanel/customer_panel.html",{"msg":msg})
+    if not(request.user.is_staff):
+        context = {}
+        context["orders"] = Order.objects.filter(customer_id__username = request.user.username)
+        context["address"] = Address.objects.filter(customer_address__customer__username = request.user.username)
+        if CustomerAdress.objects.filter(address__id = pk).values_list("default")[0][0] == True :
+            context["msg"] = "this is your default address you can't remove it"
+            return render(request,"customerPanel/customer_panel.html",context)
+        else:
+            address_to_remove = CustomerAdress.objects.get(address__id = pk)
+            address_to_remove.delete()
+            context["msg"] = "address deleted"
+            return render(request,"customerPanel/customer_panel.html",context)
     else:
-        address_to_remove = CustomerAdress.objects.get(custumer_address__id = pk)
-        address_to_remove.delete()
-        return render(request,"customerPanel/customer_panel.html",{"msg":"address deleted"})
+        return render(request,"customerPanel/customer_panel.html",{"msg":"you are not a customer"})
 
-
+@login_required
 def change_default_address(request,pk):
-    # if request.method == "POST":
-        edit  = CustomerAdress.objects.filter(customer__username = request.user.username).get(default = True )
-        edit.default = False
-        edit.save()
-        customeraddress = CustomerAdress.objects.get(address__id = pk)
-        customeraddress.defualt = True
-        customeraddress.save()
-        return render(request,"customerPanel/customer_panel.html",{"msg":"your default change"})
- 
+    if not(request.user.is_staff ):
+        context = {}
+        context["orders"] = Order.objects.filter(customer_id__username = request.user.username)
+        context["address"] = Address.objects.filter(customer_address__customer__username = request.user.username)
+        if CustomerAdress.objects.filter(address__id = pk).values_list("default")[0][0] != True :
+            edit  = CustomerAdress.objects.filter(customer__username = request.user.username).get(default = True )
+            edit.default = False
+            edit.save()
+            customeraddress = CustomerAdress.objects.get(address__id = pk)
+            customeraddress.defualt = True
+            customeraddress.save()
+            context["msg"] ="your default change"
+        else :
+            context["msg"] =" it is your default!!!! "
+        return render(request,"customerPanel/customer_panel.html",context)
+    else:
+        return render(request,"customerPanel/customer_panel.html",{"msg":"you are not a customer"})

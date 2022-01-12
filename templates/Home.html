@@ -341,7 +341,7 @@
 
       <div class="container-fluid"  >
 
-        <div class="row g-0 " style="padding-left: 50px;">
+        <div class="row g-0 " style="padding-left: 200px;">
           {% for best in best_foods %}
          
           <div class="col-6 col-md-2">
@@ -376,12 +376,12 @@
 
       <div class="container-fluid"  >
 
-        <div class="row g-0 " style="padding-left: 50px;">
+        <div class="row g-0 " style="padding-left: 200px;">
           {% for branch in best_branchs %}
          
           <div class="col-6 col-md-2">
             <div class="gallery-item">
-              <a href="{% url 'store' %}" class="gallery-lightbox" data-gall="gallery-item"> 
+              <a href="{% url 'branches' branch.id %}" class="gallery-lightbox" data-gall="gallery-item"> 
                 
                 <h4 >{{branch.name}}</h4>
                 <h5>{{branch.created_at_jalali.date}} created</h5> 

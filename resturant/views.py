@@ -3,15 +3,13 @@ from django.db.models import fields
 from django.db.models.expressions import OrderBy
 from django.db.models.aggregates import Count, Sum
 from django.db.models import Q
-from django.db.models.fields import Field
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
-from django.views.generic.edit import DeleteView,CreateView,UpdateView 
+from django.views.generic.edit import DeleteView,CreateView,UpdateView
 from resturant.forms import *
 from .models import *
 from accounts.models import *
-from django.views.decorators.http import require_POST
 from .decorators import *
 from django.views.generic import ListView
 from accounts.models import *
@@ -20,9 +18,8 @@ from django.db.models import Count
 
 from .serializer import *
 from django.urls import reverse_lazy , reverse
-# @login_required
+
 def home_page(re):
-	
 	products = FoodMenu.objects.all().filter(number__gt=0)
 	foods_deliverd= Food.objects.all().exclude(food__foodmenu__order_id__status = "Order")
 	branches = Branch.objects.all()
@@ -43,13 +40,13 @@ def home_page(re):
 
 # Create your views here.
 
-
+@login_required
 def panel_admin(req):
 	foods = Food.objects.all()
 	content = {"foods": foods}
 	return render(req,"paneladmin.html",content)
 
-
+# سرچ 
 def search(re):
 	results=[]
 	if re.method == "GET":
@@ -63,34 +60,52 @@ def search(re):
 	
 	return render(re, 'search.html', context)
 
+# def main_view(request):
+#       return render(request, 'search.html',{})
+
+# def food_detail_view(request,pk):
+#     obj = Food.objects.get(id = pk)
+#     return render(request,"search.html",{"results":obj})
+
+# def search2(request):
+#     if request.is_ajax() :
+        
+#         game = request.POST.get('search')
+#         qs = FoodMenu.objects.filter(Q(food_id__name__icontains= search)| Q(branch_id__name__icontains=search ))
+#         return render(request,"search.html",{'data':game,'qs':qs})
+#     res = None
+#     return render({res:"nothing found"})
 
 
+
+@superuser_required()
 class AddFoodPanelAdmin(CreateView):
 	model = Food
 	success_url = reverse_lazy("paneladmin")
 	template_name = "addfood.html"
 	fields = "__all__"
 
-
+@superuser_required()
 class AddCategoryPanelAdmin(CreateView):
 	model = Category
 	success_url = reverse_lazy("paneladmin")
 	template_name = "addcategory.html"
 	fields = "__all__"
 
-
+@superuser_required()
 class UpdateFoodPanelAdmin(UpdateView):
 	model = Food
 	success_url = reverse_lazy("paneladmin")
 	template_name = "updatefood.html"
 	fields = "__all__"
 
-
+@superuser_required()
 class DeleteFoodPanelAdmin(DeleteView):
 	model = Food
 	template_name = "deletefoodpanel.html"
 	success_url = reverse_lazy("paneladmin")
 	fields = "__all__"
+
 
 class DeleteItem(DeleteView):
 	model = OrderItem
@@ -124,12 +139,13 @@ def product(request, pk):
 			our_customer.device = device
 			our_customer.save()
 			customer = our_customer
-
+			request.delete_cookie("device")
 			
 
 
 		except:
 			device = request.COOKIES['device']
+			
 			customer, created = Customer.objects.get_or_create(username = device,email=device+"@gmail.com",device=device )
 	
 		if (Order.objects.filter(customer_id=customer).filter(status="Order") and FoodMenu.objects.filter(foodmenu__order_id__status="Order").filter(foodmenu__order_id__customer_id=customer)):
@@ -186,11 +202,16 @@ def cart(request):# باید بعدا درست شه faz3
 			
 			
 	try:
-		customer = request.user.device
+		customer = request.user
+		device = request.COOKIES['device']
 		if Customer.objects.get(username = request.user.device):
 			have_to_delete = Customer.objects.get(username = request.user.device)
 			have_to_delete.delete()
-
+		our_customer = Customer.objects.get(email = customer.email)
+		our_customer.device = device
+		our_customer.save()
+		customer = our_customer
+		request.delete_cookie("device")
 	except:
 		device = request.COOKIES['device']
 		customer = device
@@ -199,7 +220,7 @@ def cart(request):# باید بعدا درست شه faz3
 	orderitems=OrderItem.objects.filter(order_id__customer_id__device=customer).filter(order_id__status = "Order")
 	food = Food.objects.filter(food__foodmenu__order_id__customer_id__device=customer)
 	orders = Order.objects.filter(customer_id__device=customer).filter(status = "Order")
-	customer_address = CustomerAdress.objects.all()
+	customer_address = CustomerAdress.objects.filter(customer__username = request.user.username)
 	print(customer_address)
 	context = {'order':orders,"orderitems": orderitems,"food":food,"address":customer_address}
 
@@ -213,37 +234,71 @@ def cart(request):# باید بعدا درست شه faz3
 
 
 #panel Resturant
+@is_staff_required()
 class BranchUpdate(UpdateView):
     model = Branch
     template_name = "restaurant/branch_edit.html"
     success_url = reverse_lazy('restaurant_panel')
     fields= "__all__"
+# @is_staff_required()
+# class RestaurantCreate(CreateView):
+#     model = Branch
+#     template_name = "resturantPanel/branch_form.html"
+#     success_url = reverse_lazy('create_menu')
+#     fields = "__all__"
 
-class RestaurantCreate(CreateView):
-    model = Branch
-    template_name = "resturantPanel/branch_form.html"
-    success_url = reverse_lazy('create_menu')
-    fields = "__all__"
-
+@is_staff_required()
 class MenuCreate(CreateView):
-    model = FoodMenu
-    template_name = "resturantPanel/create_menu.html"
-    success_url = reverse_lazy('restaurant_panel')
-    fields = "__all__"
+	model = FoodMenu
+	template_name = "resturantPanel/create_menu.html"
+	success_url = reverse_lazy('restaurant_panel')
+	fields =["food_id","number","price"]
 
-def manager_menus(request):
-	manager_menus = FoodMenu.objects.all().filter(branch_id__manager_id__username= request.user.username)
-	branch = Branch.objects.get(manager_id__username = request.user.username)
-	manager = Manager.objects.get(username = request.user.username)
-	orders = Order.objects.filter(branch__manager_id__username = request.user.username).exclude(status = "Order")
-	return render(request,"resturantPanel/restaurantbranch.html",{"manager_menus":manager_menus , "branches" : branch , "manager":manager ,"orders":orders})
+	def post(self, request, *args, **kwargs):
+		branch_id = Branch.objects.get(manager_id__username = self.request.user.username)
+		food_id = request.POST["food_id"]
+		food = Food.objects.get(id = food_id)
+		price = request.POST["price"]
+		number = request.POST["number"]
+		form = self.get_form()
+		print(form)
+		if form.is_valid():
 
+			new =FoodMenu.objects.create(branch_id = branch_id,food_id = food , price = price ,number = number )
+			return redirect("restaurant_panel")
+		else:
+			return self.form_invalid(form)
+
+	
+    		
+# @login_required
+# def manager_menus(request):
+# 	manager_menus = FoodMenu.objects.all().filter(branch_id__manager_id__username= request.user.username)
+# 	branch = Branch.objects.get(manager_id__username = request.user.username)
+# 	manager = Manager.objects.get(username = request.user.username)
+# 	orders = Order.objects.filter(branch__manager_id__username = request.user.username).exclude(status = "Order")
+# 	return render(request,"resturantPanel/restaurantbranch.html",{"manager_menus":manager_menus , "branches" : branch , "manager":manager ,"orders":orders})
+
+@is_staff_required()
+class ManagerMenus(TemplateView):
+	template_name = "resturantPanel/restaurantbranch.html"
+	def get_context_data(self, **kwargs) :
+		context = super().get_context_data(**kwargs)
+		context["manager_menus"]=FoodMenu.objects.all().filter(branch_id__manager_id__username= self.request.user.username)
+		context["branches"] = Branch.objects.get(manager_id__username = self.request.user.username)
+		context["manager"] = Manager.objects.get(username = self.request.user.username)
+		context["orders"] = Order.objects.filter(branch__manager_id__username = self.request.user.username).exclude(status = "Order")
+		return context
+
+
+@is_staff_required()
 class MenuUpdate(UpdateView):
     model = FoodMenu
     template_name = "resturantPanel/edit_menu.html"
     success_url = reverse_lazy('restaurant_panel')
-    fields = "__all__"
+    fields = ["number","price"]
 
+@is_staff_required()
 class MenuDelete(DeleteView):
     model = FoodMenu
     template_name = "resturantPanel/delete_menu.html"
@@ -255,13 +310,13 @@ class Branches(DetailView):
 	model = Branch
 	template_name = "branch_detail.html"
 	fields ="__all__"
-
+@is_staff_required()
 class BranchEdit(UpdateView):
 	model = Branch
 	template_name = "resturantPanel/branch_edit.html"
 	success_url = reverse_lazy('restaurant_panel')
 	fields = ["name","category_id","address","city","discreption","is_open"]
-
+@is_staff_required()
 class ManagerEdit(UpdateView):
 	model = Manager
 	template_name = "resturantPanel/manager_edit.html"
@@ -269,7 +324,7 @@ class ManagerEdit(UpdateView):
 	fields = ["first_name","last_name","username","password"]
 	
 
-
+@customer_required()
 class CustomerPanel(TemplateView):
 	template_name = "customerPanel/customer_panel.html"
 	def get_context_data(self, **kwargs):
@@ -278,7 +333,7 @@ class CustomerPanel(TemplateView):
 		context["address"] = Address.objects.filter(customer_address__customer__username = self.request.user.username)
 		return context
 
-
+@customer_required()
 class CustomerEdit(UpdateView):
 	model = Customer
 	template_name = "customerPanel/customer_edit.html"

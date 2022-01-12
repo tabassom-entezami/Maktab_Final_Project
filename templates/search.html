@@ -1,5 +1,11 @@
 {% extends 'base.html' %}
 {% block title %} Search Results{% endblock title %}
+
+{% block css %}
+{% load static %}
+<script src="{% static 'assets/js/main2.js' %}" defer></script>
+{% endblock css %}
+
 {% block content %}
  
 <div class="container">
@@ -19,14 +25,14 @@
             <center>
                 <div class="row p-5 d-flex justify-content-around ">
                     {% for product in results %}
-                    <div class=" box-element d-flex p-1  "  >
+                    <div class=" box-element d-flex p-1  " id = resultBox >
                         
                         
                         <img class="thumbnail rounded d-flex" style="height: 200px; width: 200px; padding: 50px; border: 2px solid black;" src="{{ product.food_id.photo.url }}">
                         <div class="box-element product  "  >
                             <h5><strong>{{product.food_id.name}}</strong></h5>
                             <h4 style="display: block;  " ><strong>${{product.price}}</strong></h4>
-                            <h2 style="display: inline;">from : </h2><h1 style="display: inline;">{{product.branch_id.name}}</h1>
+                              <h2 style="display: inline;">from :<a href="{% url 'branches' product.branch_id.id %}"></h2><h1 style="display: inline;">{{product.branch_id.name}}</h1></a>
                             <br>
                              <a class="btn btn-outline-success d-inline-block" href="{% url 'product' product.id %}">View Product</a>
                             
@@ -47,3 +53,4 @@
 
 
 {% endblock content %}
+

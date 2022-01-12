@@ -18,17 +18,17 @@
 		{% if msg %}
 			<h6>{{msg}}</h6>
 		{% endif %}
-		<h3>{{product.name}}</h3>
+		<h3 name = "name" id = "name">{{product.name}}</h3>
 		
 		<hr>
 		
 		<form method="POST" action="{% url 'product' product.id %}">
 			{% csrf_token %}
-			<input min="1" value=1 type="number" name="number">
+			<input min="1" value=1 type="number" name="number"  id ="number">
 			<input class="btn btn-dark" type="submit" value="Add to Cart">
 		</form>
-		<h1>{{product.branch_id.name}}</h1>
-		<h2>Price: ${{product.price}}</h2>
+		<h1 name="branch"  id ="branch">{{product.branch_id.name}}</h1>
+		<h2 name = "price" id = "price">Price: ${{product.price}}</h2>
 		<h4>{{food.discreption}}</h4>
 		<hr>
 	</div>
