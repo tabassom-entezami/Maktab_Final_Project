@@ -9,7 +9,7 @@ from django.core.validators import MinValueValidator
     
 
 class Resturant(models.Model):
-    name=models.CharField(max_length=30)
+    name=models.CharField(max_length=30,verbose_name="resturant name")
     class Meta:
         abstract = True
             
@@ -20,7 +20,7 @@ class Branch(Resturant):
         (1,"Close"),
     }
     # branch_name = models.CharField(max_length=100)
-    manager_id=models.OneToOneField(Manager,on_delete=models.PROTECT,verbose_name="which_manager",related_name='maneger')
+    manager_id=models.OneToOneField(Manager,on_delete=models.PROTECT,verbose_name="which_manager",related_name='maneger',blank=True)
     # چون که بدون منیجر نمیتونیم داشته باشیم
     # category_id=models.ManyToManyRel("FoodCategory",on_delete=models.CASCADE,verbose_name="which_category",related_name="category_id")
     category_id=models.ForeignKey("Category",on_delete=models.PROTECT,related_name="category_branch")
@@ -28,9 +28,9 @@ class Branch(Resturant):
     address=models.CharField(max_length=100)
     city=models.CharField(max_length=30)
     discreption=models.TextField(max_length=200)
-    is_open= models.BooleanField(choices=OPEN_STATUS, verbose_name='IsOpen', default=False)
+    is_open= models.BooleanField(choices=OPEN_STATUS, verbose_name='IsOpen', default=True)
     create_date=models.DateTimeField(auto_now_add=True)
-    foods = models.ManyToManyField("Food",through='FoodMenu',related_name='food_menu')
+    foods = models.ManyToManyField("Food",through='FoodMenu',related_name='food_menu' )
     # order_id=models.ForeignKey("Order",on_delete=models.CASCADE,null=True,verbose_name="which_order",related_name='order_id')
     # resturant_id = models.ForeignKey("resturant",on_delete=models.SET_NULL,null=True,related_name ="resturant",verbose_name="which_resturant")
     # هیچ رستورانی بدون شعبه و یا برعکس نمیتونه باشه
@@ -54,7 +54,7 @@ class Branch(Resturant):
 
 
 class Food(models.Model):
-    name=models.CharField(max_length=30)
+    name=models.CharField(max_length=30,unique=True)
     photo = models.ImageField(upload_to='image', null=True, blank=True, default=None)
     discreption=models.TextField(max_length=200)
     create_date=models.DateTimeField(auto_now_add=True)

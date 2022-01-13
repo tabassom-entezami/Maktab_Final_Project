@@ -6,27 +6,32 @@
 {% block content %}
 
 <center>
-	<div class="row p-5 d-flex justify-content-around ">
+	<div class=" row d-flex justify-content-center  " style="margin-left: 200px; margin-top: 100px;">
+		<hr>
 		{% for product in products %}
-		<div class="   justify-content-center"  >
+		<div class=" row-cols-2 d-flex p-2"  >
 			
 			
-			<img class="thumbnail " style="height: 200px; width: 200px; padding: 50px; border: 2px solid black;" src="{{ product.food_id.photo.url }}">
+			<img class="thumbnal " style="height: 200px; width: 200px; padding: 50px; border: 2px solid black;" src="{{ product.food_id.photo.url }}">
 			<div class="box-element product "  >
 				<h5><strong>{{product.food_id.name}}</strong></h5>
 				<h4 style="display: block; "><strong>${{product.price}}</strong></h4>
-				<h2 style="display: inline;">from : </h2><h1 style="display: inline;">{{product.branch_id.name}}</h1>
-				 <a class="btn btn-outline-success d-block" href="{% url 'product' product.id %}">View Product</a>
+				<h2 style="display: inline;">from : </h2><a href="{% url 'branches' product.branch_id.id %}"><h4 style="display: inline;">{{product.branch_id.name}}</h4></a>
+				<br>
+				 <a class="btn btn-outline-success d-inline-block" href="{% url 'product' product.id %}">View Product</a>
 				
 				<div style="padding-top: 30px;" ></div>
-				
+			
 				
 			</div>
+			<img class="thumbnail " style="height: 200px; width: 200px; padding: 50px; border: 2px solid black;" src="{{ product.food_id.photo.url }}">
+
 		</div>
+
 		<hr>
 			
 		{% endfor %}	
-				
+		<hr>		
 	</div>
 </center>
 {% endblock content %}

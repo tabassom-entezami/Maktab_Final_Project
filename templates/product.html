@@ -2,7 +2,7 @@
 {% load static %}
 {% block content %}
 {% block css %}
-{% comment %} <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"> {% endcomment %}
+  
 <link rel="stylesheet" type="text/css" href="{% static 'assets/cart/css/main.css' %}">
 {% endblock css %} 
 <div style = "padding : 100px">
@@ -11,24 +11,24 @@
 <div class="row d-flex">
 
 	<div class="flex-column col-6" style = "padding:50px ; padding-top : 30px">
-		<img style=" border:2px solid black; padding:50px;" src="{{product.food_id.photo.url}}">
+		<img style=" border:2px solid black; padding:50px; height: 450px; width: 450px;" src="{{product.food_id.photo.url}}">
 	</div>
 
 	<div style="padding:50px" class="col-6">
 		{% if msg %}
 			<h6>{{msg}}</h6>
 		{% endif %}
-		<h3>{{product.name}}</h3>
+		<h3 name = "name" id = "name">{{product.name}}</h3>
 		
 		<hr>
 		
 		<form method="POST" action="{% url 'product' product.id %}">
 			{% csrf_token %}
-			<input min="1" value=1 type="number" name="number">
+			<input min="1" value=1 type="number" name="number"  id ="number">
 			<input class="btn btn-dark" type="submit" value="Add to Cart">
 		</form>
-		<h1>{{product.branch_id.name}}</h1>
-		<h2>Price: ${{product.price}}</h2>
+		<h1 name="branch"  id ="branch"><a href="{% url 'branches' product.branch_id.id %}" > {{product.branch_id.name}}</a></h1>
+		<h2 name = "price" id = "price">Price: ${{product.price}}</h2>
 		<h4>{{food.discreption}}</h4>
 		<hr>
 	</div>

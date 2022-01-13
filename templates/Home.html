@@ -15,6 +15,7 @@
  <!-- Google Fonts -->
  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
+ <link href="{% static 'assets/css/search.css' %}" rel="stylesheet">
  <!-- Vendor CSS Files -->
  <link href="{% static 'assets/vendor/animate.css/animate.min.css' %}" rel="stylesheet">
  <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
@@ -23,13 +24,51 @@
  <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
-
+ <link href="{% static 'assets/css/search.css' %}" rel="stylesheet">
  <!-- Template Main CSS File -->
  <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+ <link href="{% static 'assets/css/search2.css' %}" rel="stylesheet">
 
+ <style>
+
+.search-focus{
+    background-color: rgb(255, 255, 255);
+}
+.not-visible {
+
+    display: none;
+    width: 50%;
+    
+}
+
+.result-card {
+    box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 25);
+    transition: 0.5s;
+    border-radius: 7px;
+    padding: 15px 15px;
+    margin: 0 auto;
+}
+
+.item {
+    text-decoration: none;
+}
+
+.food-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+ </style>
 {% endblock css %}
 
 {% block content %}
+<div class="w-10 text-center">
+	<form id="search-form" autocomplete='off' style="margin-top: 10px;">
+		{% csrf_token %}
+		<input type="text" id='search-input' class='p-1 w-50 search' placeholder="search">
+	</form>	
+<div id="result-box" class="result-card not-visible" style="width: 50%;max-height:none;"></div>
+
 
 <section id="hero" class="d-flex align-items-center">
     <div class="container position-relative text-center text-lg-start"  >
@@ -56,7 +95,7 @@
         <div class="row">
           <div class="col-lg-6 order-1 order-lg-2"  >
             <div class="about-img">
-              <img src="assets/img/about.jpg" alt="">
+              <img src="{% static 'assets/img/about.jpg' %}" alt="">
             </div>
           </div>
           <div class="col-lg-6 pt-4 pt-lg-0 order-2 order-lg-1 content">
@@ -135,7 +174,8 @@
             <div class="col-lg-6 menu-item filter-starters">
               <img src="{{ product.food_id.photo.url }}" class="menu-img" alt="">
               <div class="menu-content">
-                <a href="{% url 'product' product.id %}">{{product.food_id.name}}</a><span>we have</span>
+                <a href="{% url 'product' product.id %}">{{product.food_id.name}} <b>FROM</b>  {{product.branch_id.name}}
+                </a><span>{{product.price}}</span>
               </div>
             </div>
 
@@ -149,159 +189,34 @@
 
         <div class="section-title">
           <h2>Specials</h2>
-          <p>Check Our Specials</p>
+          <p>Check Our branches</p>
         </div>
 
         <div class="row"  >
           <div class="col-lg-3">
             <ul class="nav nav-tabs flex-column">
+              {% for branch in branches %}
               <li class="nav-item">
-                <a class="nav-link active show" data-bs-toggle="tab" href="#tab-1">Modi sit est</a>
+                <a class="nav-link active show" data-bs-toggle="tab" href="{% url 'branches' branch.id %}">{{branch.name}}</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#tab-2">Unde praesentium sed</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#tab-3">Pariatur explicabo vel</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#tab-4">Nostrum qui quasi</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" data-bs-toggle="tab" href="#tab-5">Iusto ut expedita aut</a>
-              </li>
+              {% endfor %}
+             
             </ul>
           </div>
           <div class="col-lg-9 mt-4 mt-lg-0">
-            <div class="tab-content">
-              <div class="tab-pane active show" id="tab-1">
-                <div class="row">
-                  <div class="col-lg-8 details order-2 order-lg-1">
-                    <h3>Architecto ut aperiam autem id</h3>
-                    <p class="fst-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>
-                    <p>Et nobis maiores eius. Voluptatibus ut enim blanditiis atque harum sint. Laborum eos ipsum ipsa odit magni. Incidunt hic ut molestiae aut qui. Est repellat minima eveniet eius et quis magni nihil. Consequatur dolorem quaerat quos qui similique accusamus nostrum rem vero</p>
-                  </div>
-                  <div class="col-lg-4 text-center order-1 order-lg-2">
-                    <img src="assets/img/specials-1.png" alt="" class="img-fluid">
-                  </div>
-                </div>
-              </div>
-              <div class="tab-pane" id="tab-2">
-                <div class="row">
-                  <div class="col-lg-8 details order-2 order-lg-1">
-                    <h3>Et blanditiis nemo veritatis excepturi</h3>
-                    <p class="fst-italic">Qui laudantium consequatur laborum sit qui ad sapiente dila parde sonata raqer a videna mareta paulona marka</p>
-                    <p>Ea ipsum voluptatem consequatur quis est. Illum error ullam omnis quia et reiciendis sunt sunt est. Non aliquid repellendus itaque accusamus eius et velit ipsa voluptates. Optio nesciunt eaque beatae accusamus lerode pakto madirna desera vafle de nideran pal</p>
-                  </div>
-                  <div class="col-lg-4 text-center order-1 order-lg-2">
-                    <img src="assets/img/specials-2.png" alt="" class="img-fluid">
-                  </div>
-                </div>
-              </div>
-              <div class="tab-pane" id="tab-3">
-                <div class="row">
-                  <div class="col-lg-8 details order-2 order-lg-1">
-                    <h3>Impedit facilis occaecati odio neque aperiam sit</h3>
-                    <p class="fst-italic">Eos voluptatibus quo. Odio similique illum id quidem non enim fuga. Qui natus non sunt dicta dolor et. In asperiores velit quaerat perferendis aut</p>
-                    <p>Iure officiis odit rerum. Harum sequi eum illum corrupti culpa veritatis quisquam. Neque necessitatibus illo rerum eum ut. Commodi ipsam minima molestiae sed laboriosam a iste odio. Earum odit nesciunt fugiat sit ullam. Soluta et harum voluptatem optio quae</p>
-                  </div>
-                  <div class="col-lg-4 text-center order-1 order-lg-2">
-                    <img src="assets/img/specials-3.png" alt="" class="img-fluid">
-                  </div>
-                </div>
-              </div>
-              <div class="tab-pane" id="tab-4">
-                <div class="row">
-                  <div class="col-lg-8 details order-2 order-lg-1">
-                    <h3>Fuga dolores inventore laboriosam ut est accusamus laboriosam dolore</h3>
-                    <p class="fst-italic">Totam aperiam accusamus. Repellat consequuntur iure voluptas iure porro quis delectus</p>
-                    <p>Eaque consequuntur consequuntur libero expedita in voluptas. Nostrum ipsam necessitatibus aliquam fugiat debitis quis velit. Eum ex maxime error in consequatur corporis atque. Eligendi asperiores sed qui veritatis aperiam quia a laborum inventore</p>
-                  </div>
-                  <div class="col-lg-4 text-center order-1 order-lg-2">
-                    <img src="assets/img/specials-4.png" alt="" class="img-fluid">
-                  </div>
-                </div>
-              </div>
-              <div class="tab-pane" id="tab-5">
-                <div class="row">
-                  <div class="col-lg-8 details order-2 order-lg-1">
-                    <h3>Est eveniet ipsam sindera pad rone matrelat sando reda</h3>
-                    <p class="fst-italic">Omnis blanditiis saepe eos autem qui sunt debitis porro quia.</p>
-                    <p>Exercitationem nostrum omnis. Ut reiciendis repudiandae minus. Omnis recusandae ut non quam ut quod eius qui. Ipsum quia odit vero atque qui quibusdam amet. Occaecati sed est sint aut vitae molestiae voluptate vel</p>
-                  </div>
-                  <div class="col-lg-4 text-center order-1 order-lg-2">
-                    <img src="assets/img/specials-5.png" alt="" class="img-fluid">
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ul class="nav nav-tabs flex-column">
+              {% for branch in branches %}
+              <li class="nav-item">
+                <a class="nav-link active show"  href="{% url 'branches' branch.id %}">{{branch.discreption}}</a>
+              </li>
+              {% endfor %}
+             
+            </ul>
           </div>
         </div>
 
       </div>
     </section><!-- End Specials Section -->
-
-<!-- 
-            <div class="swiper-slide">
-              <div class="row event-item">
-                <div class="col-lg-6">
-                  <img src="assets/img/event-private.jpg" class="img-fluid" alt="">
-                </div>
-                <div class="col-lg-6 pt-4 pt-lg-0 content">
-                  <h3>Private Parties</h3>
-                  <div class="price">
-                    <p><span>$290</span></p>
-                  </div>
-                  <p class="fst-italic">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                    magna aliqua.
-                  </p>
-                  <ul>
-                    <li><i class="bi bi-check-circled"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
-                    <li><i class="bi bi-check-circled"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
-                    <li><i class="bi bi-check-circled"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
-                  </ul>
-                  <p>
-                    Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                    velit esse cillum dolore eu fugiat nulla pariatur
-                  </p>
-                </div>
-              </div>
-            </div>End testimonial item -->
-<!-- 
-            <div class="swiper-slide">
-              <div class="row event-item">
-                <div class="col-lg-6">
-                  <img src="assets/img/event-custom.jpg" class="img-fluid" alt="">
-                </div>
-                <div class="col-lg-6 pt-4 pt-lg-0 content">
-                  <h3>Custom Parties</h3>
-                  <div class="price">
-                    <p><span>$99</span></p>
-                  </div>
-                  <p class="fst-italic">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-                    magna aliqua.
-                  </p>
-                  <ul>
-                    <li><i class="bi bi-check-circled"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
-                    <li><i class="bi bi-check-circled"></i> Duis aute irure dolor in reprehenderit in voluptate velit.</li>
-                    <li><i class="bi bi-check-circled"></i> Ullamco laboris nisi ut aliquip ex ea commodo consequat.</li>
-                  </ul>
-                  <p>
-                    Ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                    velit esse cillum dolore eu fugiat nulla pariatur
-                  </p>
-                </div>
-              </div>
-            </div><!-- End testimonial item -->
-
-          <!-- </div>
-          <div class="swiper-pagination"></div>
-        </div>
-
-      </div>
-    </section>End Events Section --> 
 
 
 
@@ -324,7 +239,7 @@
                   Proin iaculis purus consequat sem cure digni ssim donec porttitora entum suscipit rhoncus. Accusantium quam, ultricies eget id, aliquam eget nibh et. Maecen aliquam, risus at semper.
                   <i class="bx bxs-quote-alt-right quote-icon-right"></i>
                 </p>
-                <img src="assets/img/testimonials/testimonials-1.jpg" class="testimonial-img" alt="">
+                <img src="{% static 'assets/img/testimonials/testimonials-1.jpg' %}" class="testimonial-img" alt="">
                 <h3>Saul Goodman</h3>
                 <h4>Ceo &amp; Founder</h4>
               </div>
@@ -402,7 +317,7 @@
 
       <div class="container-fluid"  >
 
-        <div class="row g-0 " style="padding-left: 50px;">
+        <div class="row g-0 " style="padding-left: 200px;">
           {% for best in best_foods %}
          
           <div class="col-6 col-md-2">
@@ -437,19 +352,19 @@
 
       <div class="container-fluid"  >
 
-        <div class="row g-0 " style="padding-left: 50px;">
+        <div class="row g-0 " style="padding-left: 200px;">
           {% for branch in best_branchs %}
          
           <div class="col-6 col-md-2">
             <div class="gallery-item">
-              <!-- <a href="#" class="gallery-lightbox" data-gall="gallery-item"> -->
-                {% comment %} <img src="{{ best.photo.url }}" alt="" class="img-fluid" style="height: 200px;width:200px; border: 4px solid gold;"> {% endcomment %}
+              <a href="{% url 'branches' branch.id %}" class="gallery-lightbox" data-gall="gallery-item"> 
+                
                 <h4 >{{branch.name}}</h4>
                 <h5>{{branch.created_at_jalali.date}} created</h5> 
                 <h6>{{branch.address}} address</h6>
                 <h6>{{branch.discreption}} </h6>
 
-              <!-- </a> -->
+               </a> 
             </div>
           </div>
         
@@ -555,6 +470,8 @@
 {% endblock content %}
 
 {% block script %}
+
+
     <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
     <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
@@ -564,4 +481,82 @@
 
     <!-- Template Main JS File -->
     <script src="{% static 'assets/js/main.js' %}"></script>
+  
+  <script > 
+    var URL ="{% url 'search2' %}"
+
+  </script>
+    
+<script>
+
+window.onload = function (){
+
+const url=  window.location.href
+const searchForm = document.getElementById("search-form")
+const searchInput = document.getElementById("search-input")
+const resultBox = document.getElementById('result-box')
+
+const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value
+
+const sendSearchData = (data)=>{
+  
+    $.ajax ({
+        type:'POST',
+        url: URL,
+        data :{
+            'csrfmiddlewaretoken':csrf,
+            'data': data,
+        },
+        success:function(res){
+            
+            const data = res.dataa
+            if (Array.isArray(data)){
+              console.log("_________________")
+                resultBox.innerHTML = ''
+                data.forEach(food=>{
+                    resultBox.innerHTML += `
+                    
+                    <a href="${url}${food.pk}" class='item' >
+                        <div class ="row" style="margin-left:10px">
+                            <div class ="col-2>
+                                <p class="text-muted" ><img src="${food.food.img}" class="food-img"> <b style="color:black">
+                                  ${food.food.food_name}</b><b style="color:#17a2b8"> ${food.menu.name}</b> <b style="color:#6610f2">
+                                    ${food.price} </b></p>
+                            </div>
+                        </div>
+                    </a>
+                    `
+                })
+
+
+            }else{
+                if (searchInput.value.length > 0){
+                    resultBox.innerHTML=`<b>${data}</b>`
+                }else{
+                    resultBox.classList.add('not-visible')
+                }
+            }
+       
+        },
+        error: function(error){
+            console.log(error)
+        }
+    })
+}
+
+
+// load whatever is added in search input as value (letter by letter)
+searchInput.addEventListener('keyup', e=>{
+    console.log(e.target.value)
+    if (resultBox.classList.contains('not-visible')){
+        resultBox.classList.remove('not-visible')
+    }
+    sendSearchData(e.target.value)
+})
+ 
+  
+} 
+
+</script>
+
 {% endblock script %}

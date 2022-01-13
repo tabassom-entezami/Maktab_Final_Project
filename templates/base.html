@@ -11,14 +11,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     
     {% block css %}{% endblock css %}
-    
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
     
     <title>
       
       {% block title %}{% endblock title %}
     </title>
+
   </head>
-  <body>
+ 
     <nav class="navbar navbar-expand-md navbar-dark bg-dark" aria-label="Fourth navbar example">
         <div class="container-fluid d-flex">
           <a class="navbar-brand" href="#">
@@ -62,15 +63,33 @@
                 </ul>
               </li>
               {% endif %}
+              {% if user.is_authenticated and user.is_staff and not user.is_superuser %}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="dropdown04" data-bs-toggle="dropdown" aria-expanded="false">resturant actions</a>
+                <ul class="dropdown-menu" aria-labelledby="dropdown04">
+                  <li><a class="dropdown-item" href="{% url 'restaurant_panel' %}">resturant panel</a></li>
+                  
+                  
+                  
+                </ul>
+              </li>
+              {% endif %}
+              {% if user.is_authenticated and not user.is_staff and not user.is_superuser%}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'customer_panel' %}">panel</a>
+              </li>
+              {%endif%}
+
             </ul>
-            <form>
-              <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+            <form method="GET" action="{% url 'search' %}">
+              {% csrf_token %}
+              <input class="form-control" type="text" placeholder="search" aria-label="search" name="search" id = "searchInput">
+              
             </form>
           </div>
         </div>
       </nav>
-
-
+    
 
       {% block content %}{% endblock content %}
 
@@ -123,14 +142,84 @@
       let device = getCookie('device')
   
       if (device == null || device == undefined){
-        device = uuidv4()
+          device = uuidv4()
       }
   
       document.cookie ='device=' + device + ";domain=;path=/"
   
-    </script>
+  </script>
+<script>
+window.onload = function (){
+
+const url=  window.location.href
+const searchForm = document.getElementById("search-form")
+const searchInput = document.getElementById("search-input")
+const resultBox = document.getElementById('result-box')
+
+const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value
+
+const sendSearchData = (data)=>{
+    $.ajax({
+        type:'POST',
+        url: URL,
+        data :{
+            'csrfmiddlewaretoken':csrf,
+            'data': data,
+        },
+        success: function(res){
+            // console.log(res.dataa)
+            const data = res.dataa
+            if (Array.isArray(data)){
+                resultBox.innerHTML = ''
+                data.forEach(food=>{
+                    resultBox.innerHTML += `
+                    
+                    <a href="${url}${food.pk}" class='item' >
+                        <div class ="row" style="margin-left:10px">
+                            <div class ="col-2>
+                                <p class="text-muted" ><img src="${food.food.img}" class="food-img"> <b style="color:black">${food.food.food_name}</b><b style="color:#17a2b8"> ${food.menu.name}</b> <b style="color:#6610f2">${food.price} ${food.menu.branch}</b></p>
+                            </div>
+                        </div>
+                    </a>
+                    `
+                })
+
+
+            }else{
+                if (searchInput.value.length > 0){
+                    resultBox.innerHTML=`<b>${data}</b>`
+                }else{
+                    resultBox.classList.add('not-visible')
+                }
+            }
+       
+        },
+        error: function(error){
+            console.log(error)
+        }
+    })
+}
+
+
+// load whatever is added in search input as value (letter by letter)
+searchInput.addEventListener('keyup', e=>{
+    console.log(e.target.value)
+    if (resultBox.classList.contains('not-visible')){
+        resultBox.classList.remove('not-visible')
+    }
+    sendSearchData(e.target.value)
+})
+ 
   
+}
+
+</script>
+
+
+ 
+
     {% block script %}{% endblock script %}
+
     <!-- Option 2: Separate Popper and Bootstrap JS -->
     <!--
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB" crossorigin="anonymous"></script>

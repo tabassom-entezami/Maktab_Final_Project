@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block css %}
+{% load static %}
+
+{% endblock css %}
+{% block title %} search {% endblock title %} 
+
+{% block content %}
+
+<div class="w-10 text-center">
+	<form id="search-form" autocomplete='off' style="margin-top: 10px;">
+	  {% csrf_token %}
+	  <input type="text" id='search-input' class='p-1 w-50 search' placeholder="search">
+	</form>	
+	<div id="result-box" class="result-card not-visible" style="width: 50%;max-height:none;"></div>
+  </div>
+{% endblock content %}
+
+
+
+
+
+
+
+

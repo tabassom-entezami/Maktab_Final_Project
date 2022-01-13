@@ -12,33 +12,43 @@ class CustomerAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'email' , "username"]
     list_display_links = ['email',"username"]
     search_fields = ['email']
-    
+    fieldsets = (
+            (None, {
+                "fields": (
+                    'username','email','password'
+                ),
+            }),
+        )
     def get_queryset(self, request):
             return Customer.objects.filter(is_staff=False)
 
 
 @admin.register(Address)
 class AdressAdmin(admin.ModelAdmin):
-    list_display = ['city', 'street', 'plaque']
+    list_display = ['city', 'street', 'plaque',"id"]
     search_fields = ['city']
     empty_value_display = "---"
 
 @admin.register(CustomerAdress)
 class CustomerAdressAdmin(admin.ModelAdmin):
-    list_display = ['customer', 'address', 'default']
+    list_display = ['customer', 'address', 'default',"id"]
     list_display_links = ['address']
     empty_value_display = "---"
 
-    def save_model(self, request, obj, form, change) -> None:
-        
-        obj.set_password(form.cleaned_data["password"])
-        obj.save
+    
 @admin.register(Manager)
 class managerAdmin(admin.ModelAdmin):
     list_display = ['first_name', 'last_name', 'email']
+    list_display_links = ["email"]
     search_fields = ['email']
     empty_value_display = "---"
-
+    fieldsets = (
+            (None, {
+                "fields": (
+                    'username','email','password'
+                ),
+            }),
+        )
     
     def get_queryset(self, request):
         return Manager.objects.filter(is_staff=True, is_superuser=False)
@@ -54,7 +64,13 @@ class AdminProxyAdmin(admin.ModelAdmin):
     list_editable = ['email']
     search_fields = ['username', 'email']
     empty_value_display = "---"
-    
+    fieldsets = (
+            (None, {
+                "fields": (
+                    'username','email','password'
+                ),
+            }),
+        )
     def get_queryset(self, request):
         return Admin.objects.filter(is_superuser=True)
 
