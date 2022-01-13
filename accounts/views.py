@@ -54,7 +54,7 @@ def sign_up_view(request):
             address.save()
             customeraddress ,create= CustomerAdress.objects.get_or_create(customer = customer,address=address,default = True)
             customeraddress.save()
-            return redirect("Home")
+            return redirect("login")
     return render(request , "registration/signup.html" , {"form":form})
 
 def sign_up_manager_view (request):
@@ -63,7 +63,7 @@ def sign_up_manager_view (request):
         form = CostumRegisterForm1(request.POST)
         if form.is_valid() and request.POST["password"] and request.POST["password2"] and request.POST["password"] == request.POST["password2"]:
             form = form.save()
-            return redirect("Home")
+            return redirect("login")
         return render(request , "registration/signupmanager.html" , {"form":form,"msg":"something went wrong"})
 
     return render(request , "registration/signupmanager.html" , {"form":form})
@@ -133,3 +133,6 @@ def change_default_address(request,pk):
         return render(request,"customerPanel/customer_panel.html",context)
     else:
         return render(request,"customerPanel/customer_panel.html",{"msg":"you are not a customer"})
+
+
+        

@@ -1,7 +1,7 @@
 from os import name
 from django.urls import path
 
-from accounts.views import delete_address
+from accounts.views import *
 from .views import *
 
 urlpatterns = [
@@ -20,6 +20,8 @@ urlpatterns = [
     
 
     path("search/" , search , name="search"),
+    
+   
     # path('search2/',main_view,name="main"),
     # path('searchresults/',search2,name="search2"),
     # path('<int:pk>/',food_detail_view,name="detail"),

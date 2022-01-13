@@ -3,6 +3,7 @@ from django.db.models import fields
 from django.db.models.expressions import OrderBy
 from django.db.models.aggregates import Count, Sum
 from django.db.models import Q
+from django.forms.widgets import NumberInput
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
 from django.views.generic.detail import DetailView
@@ -15,10 +16,13 @@ from django.views.generic import ListView
 from accounts.models import *
 from django.contrib.auth.decorators import login_required 
 from django.db.models import Count 
-
+from django.http import JsonResponse, request
+from rest_framework.response import Response
 from .serializer import *
 from django.urls import reverse_lazy , reverse
+from .serializer import *
 
+#home
 def home_page(re):
 	products = FoodMenu.objects.all().filter(number__gt=0)
 	foods_deliverd= Food.objects.all().exclude(food__foodmenu__order_id__status = "Order")
@@ -36,9 +40,31 @@ def home_page(re):
 	best_branchs = Branch.objects.filter(foods__food__foodmenu__order_id__status='Peyment').annotate(sums =Sum("foods__food__foodmenu__order_id__total_price") ).order_by("-sums")[:5]
 
 	context = {'products':products,"way2":best_foods,"best_foods":values,"best_branchs":best_branchs,"branches":branches}
+
+	# if re.method == 'POST'  and re.is_ajax():
+	# 	text = re.POST.get('search_input')
+	# 	if text :
+	# 		branch = Branch.objects.filter(name__icontains=text)
+	# 		food = Food.objects.filter(name__icontains=text)
+	# 		branches ={}
+	# 		foods ={}
+	# 		if branch:
+	# 			serializer_branch = BranchSerializer(branch,many=True,context={'request': request})
+	# 			branches = serializer_branch.data    
+			
+	# 		if food:
+	# 			serializer_food = FoodSerializer(food,many=True,context={'request': request})
+	# 			foods = serializer_food.data
+			
+	# 		return Response({"branches":branches , "foods":foods})
+	# 	else:
+	# 		Response({"branches":[] , "foods":[],"msg":"does not match"})
+
+				
+					
 	return render(re, "Home.html" , context)
 
-# Create your views here.
+
 
 @login_required
 def panel_admin(req):
@@ -60,6 +86,35 @@ def search(re):
 	
 	return render(re, 'search.html', context)
 
+
+
+# def sample_django_template(req):
+# 	if req.method == 'POST'  and req.is_ajax():
+# 		print("_________________________-")
+# 		text = req.POST.get('text')
+		
+# 		p = FoodMenu.objects.filter(Q(food_id__name__icontains= text)| Q(branch_id__name__icontains=text ))
+# 		if p in p:
+# 			return JsonResponse({
+# 				'food':p.values_list('name', flat=True),
+# 				'price': p.price,
+# 				"number":p.number,
+# 				'food_id': (p.food_id.name),
+# 				"branch_id":(p.branch_id.name),
+
+# 			})
+# 		else:
+# 			return JsonResponse({
+# 				'food': [],
+# 				'msg' : "doesn't match any files",
+# 			})
+
+# 	return render(req,'search.html',{
+# 		'test' : "test"
+# 	})
+
+
+
 # def main_view(request):
 #       return render(request, 'search.html',{})
 
@@ -77,7 +132,7 @@ def search(re):
 #     return render({res:"nothing found"})
 
 
-
+# admin
 @superuser_required()
 class AddFoodPanelAdmin(CreateView):
 	model = Food
@@ -114,12 +169,30 @@ class DeleteItem(DeleteView):
 	fields = "__all__"
 
 
-def resturant(request):
+def resturant(re):
 	products = FoodMenu.objects.all()
 	food = Food.objects.all()
-	
 	context = {'products':products,"food":food}
-	return render(request, 'resturant.html', context)
+	if re.method == 'POST'  and re.is_ajax():
+		text = re.POST.get('search_input')
+		if text :
+			branch = Branch.objects.filter(name__icontains=text)
+			food = Food.objects.filter(name__icontains=text)
+			branches ={}
+			foods ={}
+			if branch:
+				serializer_branch = BranchSerializer(branch,many=True,context={'request': request})
+				branches = serializer_branch.data    
+			
+			if food:
+				serializer_food = FoodSerializer(food,many=True,context={'request': request})
+				foods = serializer_food.data
+			
+			return Response({"branches":branches , "foods":foods})
+		else:
+			Response({"branches":[] , "foods":[],"msg":"does not match"})
+
+	return render(re, 'resturant.html', context)
 
 def product(request, pk):
 	product = FoodMenu.objects.get(id=pk)
@@ -139,15 +212,13 @@ def product(request, pk):
 			our_customer.device = device
 			our_customer.save()
 			customer = our_customer
-			request.delete_cookie("device")
 			
-
-
 		except:
 			device = request.COOKIES['device']
-			
 			customer, created = Customer.objects.get_or_create(username = device,email=device+"@gmail.com",device=device )
 	
+
+
 		if (Order.objects.filter(customer_id=customer).filter(status="Order") and FoodMenu.objects.filter(foodmenu__order_id__status="Order").filter(foodmenu__order_id__customer_id=customer)):
 			# print(FoodMenu.objects.filter(foodmenu__order_id__status="Order").filter(foodmenu__order_id__customer_id=customer).values_list("branch_id__name").last()[0],"___",FoodMenu.objects.filter(id = pk).values_list("branch_id__name").last()[0])	
 			if (FoodMenu.objects.filter(id = pk).values_list("branch_id__name").last())[0] == FoodMenu.objects.filter(foodmenu__order_id__status="Order").filter(foodmenu__order_id__customer_id=customer).values_list("branch_id__name").first()[0]:
@@ -211,7 +282,7 @@ def cart(request):# باید بعدا درست شه faz3
 		our_customer.device = device
 		our_customer.save()
 		customer = our_customer
-		request.delete_cookie("device")
+		
 	except:
 		device = request.COOKIES['device']
 		customer = device
