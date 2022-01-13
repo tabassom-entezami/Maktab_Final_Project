@@ -499,6 +499,7 @@ const resultBox = document.getElementById('result-box')
 const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value
 
 const sendSearchData = (data)=>{
+  
     $.ajax ({
         type:'POST',
         url: URL,
@@ -506,7 +507,7 @@ const sendSearchData = (data)=>{
             'csrfmiddlewaretoken':csrf,
             'data': data,
         },
-        success: function(res){
+        success:function(res){
             
             const data = res.dataa
             if (Array.isArray(data)){

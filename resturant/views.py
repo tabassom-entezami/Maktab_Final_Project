@@ -101,7 +101,7 @@ def search_result(req):
 
 def get_info_search(req, pk):
     obj = get_object_or_404(FoodMenu, pk=pk)
-    return render(req, 'search2.html', {'obj':obj})
+    return render(req, 'search.html', {'obj':obj})
 
 
 
