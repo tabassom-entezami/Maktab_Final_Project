@@ -35,30 +35,14 @@ def home_page(re):
 		my_dict.update({i:order_item_of_one_food})
 	best_foods = dict(sorted(my_dict.items(), key=lambda item: item[1]))
 
+
 	values = Food.objects.all().filter(food__foodmenu__order_id__status = "Peyment").annotate(our_sum=Sum("food__foodmenu__number")).order_by("-our_sum")[:5]
 
 	best_branchs = Branch.objects.filter(foods__food__foodmenu__order_id__status='Peyment').annotate(sums =Sum("foods__food__foodmenu__order_id__total_price") ).order_by("-sums")[:5]
 
 	context = {'products':products,"way2":best_foods,"best_foods":values,"best_branchs":best_branchs,"branches":branches}
 
-	# if re.method == 'POST'  and re.is_ajax():
-	# 	text = re.POST.get('search_input')
-	# 	if text :
-	# 		branch = Branch.objects.filter(name__icontains=text)
-	# 		food = Food.objects.filter(name__icontains=text)
-	# 		branches ={}
-	# 		foods ={}
-	# 		if branch:
-	# 			serializer_branch = BranchSerializer(branch,many=True,context={'request': request})
-	# 			branches = serializer_branch.data    
-			
-	# 		if food:
-	# 			serializer_food = FoodSerializer(food,many=True,context={'request': request})
-	# 			foods = serializer_food.data
-			
-	# 		return Response({"branches":branches , "foods":foods})
-	# 	else:
-	# 		Response({"branches":[] , "foods":[],"msg":"does not match"})
+
 
 				
 					
@@ -85,6 +69,35 @@ def search(re):
 	context ={'query': query, 'results': results}
 	
 	return render(re, 'search.html', context)
+
+# def search_result(req):
+#     if req.is_ajax() and req.method == "POST":
+#         res = None
+#         result = req.POST.get('data')
+#         q = FoodMenu.objects.filter(Q(food_id__name__icontains= result)| Q(branch_id__name__icontains=result ))
+#         if len(q) > 0 and len(result) > 0:
+#             data =[]
+#             for i in q:
+#                 item ={
+#                     'pk' : i.pk,
+#                     'food':{'food_name':i.food_id.name, 'img':i.food_id.photo.url},
+#                     'menu': {'name':i.branch_id.name, 'branch':i.branch.city},
+#                     'price': i.price,
+#                     'quantity': i.number
+#                 }
+#                 data.append(item)
+#             res = data
+#         else:
+#             res = "No Food Or Restaurant Found..."
+
+#         return JsonResponse({'dataa':res})
+#     return JsonResponse({})
+
+
+
+# def get_info_search(req, pk):
+#     obj = FoodMenu.objects.get(pk=pk)
+#     return render(req, 'Home.html', {'obj':obj})
 
 
 

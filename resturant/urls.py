@@ -18,9 +18,11 @@ urlpatterns = [
     path('categoryadd/', AddCategoryPanelAdmin.as_view() , name = "addcategory"),
     path("branch/<int:pk>",Branches.as_view() , name = "branches" ),
     
-
-    path("search/" , search , name="search"),
     
+    path("search/" , search , name="search"),
+
+    # path("search2/", search_result,name = "search2"),
+    # path("<int:pk>/",get_info_search,name="get_search") ,
    
     # path('search2/',main_view,name="main"),
     # path('searchresults/',search2,name="search2"),
