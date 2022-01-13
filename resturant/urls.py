@@ -20,8 +20,8 @@ urlpatterns = [
     
     
     path("search/" , search , name="search"),
-    # path("search2/", search_result ,name = "search2"),
-    # path("<int:pk>/",get_info_search ,name="get_search") ,
+    path("search2/", search_result ,name = "search2"),
+    path("<int:pk>/",get_info_search ,name="get_search") ,
    
     # path('search2/',main_view,name="main"),
     # path('searchresults/',search2,name="search2"),

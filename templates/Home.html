@@ -15,6 +15,7 @@
  <!-- Google Fonts -->
  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
+ <link href="{% static 'assets/css/search.css' %}" rel="stylesheet">
  <!-- Vendor CSS Files -->
  <link href="{% static 'assets/vendor/animate.css/animate.min.css' %}" rel="stylesheet">
  <link href="{% static 'assets/vendor/aos/aos.css' %}" rel="stylesheet">
@@ -23,13 +24,51 @@
  <link href="{% static 'assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
  <link href="{% static 'assets/vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet">
  <link href="{% static 'assets/vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet">
-
+ <link href="{% static 'assets/css/search.css' %}" rel="stylesheet">
  <!-- Template Main CSS File -->
  <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+ <link href="{% static 'assets/css/search2.css' %}" rel="stylesheet">
 
+ <style>
+
+.search-focus{
+    background-color: rgb(255, 255, 255);
+}
+.not-visible {
+
+    display: none;
+    width: 50%;
+    
+}
+
+.result-card {
+    box-shadow: 0 8px 8px 0 rgba(0, 0, 0, 25);
+    transition: 0.5s;
+    border-radius: 7px;
+    padding: 15px 15px;
+    margin: 0 auto;
+}
+
+.item {
+    text-decoration: none;
+}
+
+.food-img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
+ </style>
 {% endblock css %}
 
 {% block content %}
+<div class="w-10 text-center">
+	<form id="search-form" autocomplete='off' style="margin-top: 10px;">
+		{% csrf_token %}
+		<input type="text" id='search-input' class='p-1 w-50 search' placeholder="search">
+	</form>	
+<div id="result-box" class="result-card not-visible" style="width: 50%;max-height:none;"></div>
+
 
 <section id="hero" class="d-flex align-items-center">
     <div class="container position-relative text-center text-lg-start"  >
@@ -150,7 +189,7 @@
 
         <div class="section-title">
           <h2>Specials</h2>
-          <p>Check Our Specials</p>
+          <p>Check Our branches</p>
         </div>
 
         <div class="row"  >
@@ -158,7 +197,7 @@
             <ul class="nav nav-tabs flex-column">
               {% for branch in branches %}
               <li class="nav-item">
-                <a class="nav-link active show" data-bs-toggle="tab" href="#{{branch.id}}">{{branch.name}}</a>
+                <a class="nav-link active show" data-bs-toggle="tab" href="{% url 'branches' branch.id %}">{{branch.name}}</a>
               </li>
               {% endfor %}
              
@@ -168,7 +207,7 @@
             <ul class="nav nav-tabs flex-column">
               {% for branch in branches %}
               <li class="nav-item">
-                <a class="nav-link active show"  href="{% url 'branches' branch.id %}">{{branch.name}}</a>
+                <a class="nav-link active show"  href="{% url 'branches' branch.id %}">{{branch.discreption}}</a>
               </li>
               {% endfor %}
              
@@ -431,6 +470,8 @@
 {% endblock content %}
 
 {% block script %}
+
+
     <script src="{% static 'assets/vendor/aos/aos.js' %}"></script>
     <script src="{% static 'assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
     <script src="{% static 'assets/vendor/glightbox/js/glightbox.min.js' %}"></script>
@@ -440,5 +481,81 @@
 
     <!-- Template Main JS File -->
     <script src="{% static 'assets/js/main.js' %}"></script>
-    <script src={% static 'assets/js/search.js' %}></script>
+  
+  <script > 
+    var URL ="{% url 'search2' %}"
+
+  </script>
+    
+<script>
+
+window.onload = function (){
+
+const url=  window.location.href
+const searchForm = document.getElementById("search-form")
+const searchInput = document.getElementById("search-input")
+const resultBox = document.getElementById('result-box')
+
+const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value
+
+const sendSearchData = (data)=>{
+    $.ajax ({
+        type:'POST',
+        url: URL,
+        data :{
+            'csrfmiddlewaretoken':csrf,
+            'data': data,
+        },
+        success: function(res){
+            
+            const data = res.dataa
+            if (Array.isArray(data)){
+              console.log("_________________")
+                resultBox.innerHTML = ''
+                data.forEach(food=>{
+                    resultBox.innerHTML += `
+                    
+                    <a href="${url}${food.pk}" class='item' >
+                        <div class ="row" style="margin-left:10px">
+                            <div class ="col-2>
+                                <p class="text-muted" ><img src="${food.food.img}" class="food-img"> <b style="color:black">
+                                  ${food.food.food_name}</b><b style="color:#17a2b8"> ${food.menu.name}</b> <b style="color:#6610f2">
+                                    ${food.price} </b></p>
+                            </div>
+                        </div>
+                    </a>
+                    `
+                })
+
+
+            }else{
+                if (searchInput.value.length > 0){
+                    resultBox.innerHTML=`<b>${data}</b>`
+                }else{
+                    resultBox.classList.add('not-visible')
+                }
+            }
+       
+        },
+        error: function(error){
+            console.log(error)
+        }
+    })
+}
+
+
+// load whatever is added in search input as value (letter by letter)
+searchInput.addEventListener('keyup', e=>{
+    console.log(e.target.value)
+    if (resultBox.classList.contains('not-visible')){
+        resultBox.classList.remove('not-visible')
+    }
+    sendSearchData(e.target.value)
+})
+ 
+  
+} 
+
+</script>
+
 {% endblock script %}

@@ -71,34 +71,37 @@ def search(re):
 	
 	return render(re, 'search.html', context)
 
-# def search_result(req):
-#     if req.is_ajax() :
-#         res = None
-#         result = req.POST.get('data')
-#         q = FoodMenu.objects.filter(Q(food_id__name__icontains= result)| Q(branch_id__name__icontains=result ))
-#         if len(q) > 0 and len(result) > 0:
-#             data =[]
-#             for i in q:
-#                 item ={
-#                     'pk' : i.pk,
-#                     'food':{'food_name':i.food_id.name, 'img':i.food_id.photo.url},
-#                     'menu': {'name':i.branch_id.name, 'branch':i.branch.city},
-#                     'price': i.price,
-#                     'quantity': i.number
-#                 }
-#                 data.append(item)
-#             res = data
-#         else:
-#             res = "No Food Or Restaurant Found..."
+def search_result(req):
+	if req.is_ajax():
+		
+		res = None
+		result = req.POST.get('data')
+		# | Q(branch__restaurant__name__icontains=result)
+		# 'branch':i.branch.restaurant
+		q = FoodMenu.objects.filter(Q(food_id__name__icontains= result)| Q(branch_id__name__icontains= result))
+		if len(q) > 0 and len(result) > 0:
+			data =[]
+			for i in q:
+				item ={
+					'pk' : i.pk,
+					'food':{'name':i.food_id.name, 'img':i.food_id.photo.url},
+					'branch': {'name':i.branch_id.name, },
+					'price': i.price,
+					'inventory': i.number
+				}
+				data.append(item)
+			res = data
+		else:
+			res = "No Food Or Restaurant Found..."
 
-#         return JsonResponse({'dataa':res})
-#     return JsonResponse({})
+		return JsonResponse({'dataa':res})
+	return JsonResponse({})
 
 
 
-# def get_info_search(req, pk):
-#     obj = get_object_or_404(FoodMenu, pk=pk)
-#     return render(req, 'search2.html', {'obj':obj})
+def get_info_search(req, pk):
+    obj = get_object_or_404(FoodMenu, pk=pk)
+    return render(req, 'search2.html', {'obj':obj})
 
 
 

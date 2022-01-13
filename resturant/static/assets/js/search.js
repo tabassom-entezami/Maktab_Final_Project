@@ -1,71 +1,63 @@
-$( document ).ready(function() {
+window.onload = function (){
+
+    const url=  window.location.href
+    const searchForm = document.getElementById("search-form")
+    const searchInput = document.getElementById("search-input")
+    const resultBox = document.getElementById('result-box')
+    
+    const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value
+    
+    const sendSearchData = (data)=>{
+        $.ajax({
+            type:'POST',
+            url: URL,
+            data :{
+                'csrfmiddlewaretoken':csrf,
+                'data': data,
+            },
+            success: function(res){
+                // console.log(res.dataa)
+                const data = res.dataa
+                if (Array.isArray(data)){
+                    resultBox.innerHTML = ''
+                    data.forEach(food=>{
+                        resultBox.innerHTML += `
+                        
+                        <a href="${url}${food.pk}" class='item' >
+                            <div class ="row" style="margin-left:10px">
+                                <div class ="col-2>
+                                    <p class="text-muted" ><img src="${food.food.img}" class="food-img"> <b style="color:black">${food.food.food_name}</b><b style="color:#17a2b8"> ${food.menu.name}</b> <b style="color:#6610f2">${food.price} ${food.menu.branch}</b></p>
+                                </div>
+                            </div>
+                        </a>
+                        `
+                    })
     
     
-    $(".formsearch").on("click", function() {
-       
-        send_ajax($('#text_search').val())
-    });
-        function send_ajax(input_data){
-            data={
-                'csrfmiddlewaretoken':CSRF_TOKEN,
-                'search_input':input_data
-                };
-            $.ajax({
-                type: 'GET',
-                url: "{% url 'Home' %}",
-                dataType: 'json',
-                data:data,
-                success: function(res) {
-                   
-                    show_branches(res)
+                }else{
+                    if (searchInput.value.length > 0){
+                        resultBox.innerHTML=`<b>${data}</b>`
+                    }else{
+                        resultBox.classList.add('not-visible')
+                    }
                 }
-            });
-        }
-        
-        function show_branches(data){
-            branch_ul_tag= $('#branch_ul')
-            food_ul_tag= $('#food_ul')
-            branch_ul_tag.empty()
-            food_ul_tag.empty()
            
-            var branch = data.branches;
-            var food = data.foods ;    
-           
-            if ( branch ){
-              
-                $.each(branch, function(i, branch){
-                    var li = document.createElement("li");
-                    var a = document.createElement("a");
-                    var link = document.createTextNode(branch.name);
-                  
-                // Append the text node to anchor element.
-                    a.appendChild(link); 
-                    
-                    a.href = "{% url 'branches' branch.id %}"; 
-                    li.append(a)
-                    branch_ul_tag.append(li)
-                   
-                });
-               
-                
-            }else{
-                branch_ul_tag.append()
+            },
+            error: function(error){
+                console.log(error)
             }
-            if ( food ){
-                $.each(food, function(i, food){
-                    var li = document.createElement("li");
-                    var span = document.createElement("span");
-                    span.append(food.name) 
-                    li.append(span)
-                    
-                    food_ul_tag.append(li)
-                   
-                });
-               
-                
-            }else{
-                food_ul_tag.append()
-            }
-            
+        })
+    }
+    
+    
+    // load whatever is added in search input as value (letter by letter)
+    searchInput.addEventListener('keyup', e=>{
+        console.log(e.target.value)
+        if (resultBox.classList.contains('not-visible')){
+            resultBox.classList.remove('not-visible')
         }
-      });
+        sendSearchData(e.target.value)
+    })
+     
+      
+    }
