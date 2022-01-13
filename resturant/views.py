@@ -21,6 +21,7 @@ from rest_framework.response import Response
 from .serializer import *
 from django.urls import reverse_lazy , reverse
 from .serializer import *
+from django.shortcuts import get_object_or_404
 
 #home
 def home_page(re):
@@ -71,7 +72,7 @@ def search(re):
 	return render(re, 'search.html', context)
 
 # def search_result(req):
-#     if req.is_ajax() and req.method == "POST":
+#     if req.is_ajax() :
 #         res = None
 #         result = req.POST.get('data')
 #         q = FoodMenu.objects.filter(Q(food_id__name__icontains= result)| Q(branch_id__name__icontains=result ))
@@ -96,8 +97,8 @@ def search(re):
 
 
 # def get_info_search(req, pk):
-#     obj = FoodMenu.objects.get(pk=pk)
-#     return render(req, 'Home.html', {'obj':obj})
+#     obj = get_object_or_404(FoodMenu, pk=pk)
+#     return render(req, 'search2.html', {'obj':obj})
 
 
 
