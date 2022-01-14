@@ -37,9 +37,9 @@ def home_page(re):
 	best_foods = dict(sorted(my_dict.items(), key=lambda item: item[1]))
 
 
-	values = Food.objects.all().filter(food__foodmenu__order_id__status = "Peyment").annotate(our_sum=Sum("food__foodmenu__number")).order_by("-our_sum")[:5]
+	values = Food.objects.all().exclude(food__foodmenu__order_id__status = "Order").annotate(our_sum=Sum("food__foodmenu__number")).order_by("-our_sum")[:5]
 
-	best_branchs = Branch.objects.filter(foods__food__foodmenu__order_id__status='Peyment').annotate(sums =Sum("foods__food__foodmenu__order_id__total_price") ).order_by("-sums")[:5]
+	best_branchs = Branch.objects.exclude(food__foodmenu__order_id__status = "Order").annotate(sums =Sum("foods__food__foodmenu__order_id__total_price") ).order_by("-sums")[:5]
 
 	context = {'products':products,"way2":best_foods,"best_foods":values,"best_branchs":best_branchs,"branches":branches}
 
@@ -77,7 +77,7 @@ def search_result(req):
 		res = None
 		result = req.POST.get('data')
 		q = FoodMenu.objects.filter(Q(food_id__name__icontains= result)| Q(branch_id__name__icontains= result))
-		if len(q) > 0 and len(result) > 0:
+		if len(q)  and len(result) :
 			data =[]
 			for i in q:
 				item ={
