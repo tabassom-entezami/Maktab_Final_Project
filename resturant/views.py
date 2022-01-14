@@ -76,16 +76,14 @@ def search_result(req):
 		
 		res = None
 		result = req.POST.get('data')
-		# | Q(branch__restaurant__name__icontains=result)
-		# 'branch':i.branch.restaurant
 		q = FoodMenu.objects.filter(Q(food_id__name__icontains= result)| Q(branch_id__name__icontains= result))
 		if len(q) > 0 and len(result) > 0:
 			data =[]
 			for i in q:
 				item ={
-					'pk' : i.pk,
+					'pk' : i.id,
 					'food':{'name':i.food_id.name, 'img':i.food_id.photo.url},
-					'branch': {'name':i.branch_id.name, },
+					'branch': {'name':i.branch_id.name },
 					'price': i.price,
 					'inventory': i.number
 				}
