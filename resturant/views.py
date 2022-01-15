@@ -336,9 +336,9 @@ class BranchUpdate(UpdateView):
 #     fields = "__all__"
 
 @is_staff_required()
-class MenuUpdate(UpdateView):
+class MenuStatusUpdate(UpdateView):
 	model = Order
-	template_name = "restaurantPanel/menuupdate.html"
+	template_name = "resturantPanel/menuupdate.html"
 	success_url = reverse_lazy('restaurant_panel')
 	fields = ["status"]
 

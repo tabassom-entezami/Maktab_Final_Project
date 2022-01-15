@@ -17,7 +17,7 @@ urlpatterns = [
     path('panel/', panel_admin , name ="paneladmin"),
     path('categoryadd/', AddCategoryPanelAdmin.as_view() , name = "addcategory"),
     path("branch/<int:pk>/",Branches.as_view() , name = "branches" ),
-    path("statusupdate/<int:pk>/", MenuUpdate.as_view() , name ="statusupdate"),
+    path("statusupdate/<int:pk>/", MenuStatusUpdate.as_view() , name ="statusupdate"),
     
     path("search/" , search , name="search"),
     path("search2/", search_result ,name = "search2"),
