@@ -69,7 +69,7 @@ def sign_up_manager_view (request):
     return render(request , "registration/signupmanager.html" , {"form":form})
 
 
-class LoginView(generic.CreateView): 
+class LoginView(CreateView): 
     form_class = CostumRegisterForm 
     success_url = reverse_lazy('Home') 
     template_name = 'registration/login.html'

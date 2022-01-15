@@ -14,18 +14,18 @@
 		<div class="col-lg-12">
 			<div class="box-element "  style="padding:50px">
 
-				<a  class="btn btn-outline-dark"  href="{% url 'store' %}">&#x2190; Continue Shopping</a>
+				<a  class="btn btn-outline-light"  href="{% url 'store' %}">&#x2190; Continue Shopping</a>
 				
 				<br>
 				<br>
 				{% for orderitems in order %}
-				<table class="table">
+				<table class="table text-white">
 					<tr>
 						<th><h5>Items: <strong>{{orderitems.get_cart_items}}</strong></h5></th>
 						<th><h5>Total:<strong> ${{orderitems.get_cart_total|floatformat:2}}</strong></h5></th>
 						<th>
 							{%if user.is_authenticated %}
-							<form method="POST" >
+							<form method="POST" class="text-white">
 								{% csrf_token %}
 								<input class="btn btn-dark " type="submit" value="check out">
 								
@@ -97,4 +97,5 @@
 	{% else %}
 	<h1 style="text-align:center;padding: 100px">No Items in cart</h1>
 	{% endif %}
+
 {% endblock content %}

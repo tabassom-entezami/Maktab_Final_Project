@@ -26,8 +26,8 @@
         </div>
        
     </div>
-    <a class="btn btn-outline-dark d-inline-block" href="{% url 'delete_menu' m.id %}">delete menu</a> 
-    <a class="btn btn-outline-dark d-inline-block" href="{% url 'edit_menu' m.id %}">edit menu</a> 
+    <a class="btn btn-outline-light d-inline-block" href="{% url 'delete_menu' m.id %}">delete menu</a> 
+    <a class="btn btn-outline-light d-inline-block" href="{% url 'edit_menu' m.id %}">edit menu</a> 
     <hr>
         
 
@@ -38,9 +38,9 @@
     {%endif%}
 {%endfor%} 
 {% if user.is_authenticated and user.is_staff%}
-    <a href="{% url 'create_menu'  %}" class="btn btn-outline-dark d-inline-block" >add a food</a>
-    <a href="{% url 'branch_edit' branches.id %}" class="btn btn-outline-dark d-inline-block" >edit your branch</a>
-    <a href="{% url 'manager_edit' manager.id %}" class="btn btn-outline-dark d-inline-block" >edit your information</a>
+    <a href="{% url 'create_menu'  %}" class="btn btn-outline-light d-inline-block" >add a food</a>
+    <a href="{% url 'branch_edit' branches.id %}" class="btn btn-outline-light d-inline-block" >edit your branch</a>
+    <a href="{% url 'manager_edit' manager.id %}" class="btn btn-outline-light d-inline-block" >edit your information</a>
 {%endif%}
 </div>
 </article>
@@ -71,7 +71,7 @@
             <div class="col-2"><p>${{item.total_price|floatformat:2}}</P></div>
             <div class="col-1"><p class="quantity">{{item.created_date}}</p></div>
             <div class="col-2" ><p>{{item.customer_id}}</p></div>
-            
+            <div class="col-2" ><a href="{% url 'statusupdate' item.id %}" class="btn btn-outline-light"> update status of this</a></div>
             
             </div>
         

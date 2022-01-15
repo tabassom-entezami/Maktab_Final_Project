@@ -1,3 +1,4 @@
+from typing import Generic
 from django.db import models
 from django.db.models import fields
 from django.db.models.expressions import OrderBy
@@ -39,7 +40,7 @@ def home_page(re):
 
 	values = Food.objects.all().exclude(food__foodmenu__order_id__status = "Order").annotate(our_sum=Sum("food__foodmenu__number")).order_by("-our_sum")[:5]
 
-	best_branchs = Branch.objects.exclude(food__foodmenu__order_id__status = "Order").annotate(sums =Sum("foods__food__foodmenu__order_id__total_price") ).order_by("-sums")[:5]
+	best_branchs = Branch.objects.exclude(foods__food__foodmenu__order_id__status='Order').annotate(sums =Sum("foods__food__foodmenu__order_id__total_price") ).order_by("-sums")[:5]
 
 	context = {'products':products,"way2":best_foods,"best_foods":values,"best_branchs":best_branchs,"branches":branches}
 
@@ -283,6 +284,7 @@ def cart(request):# باید بعدا درست شه faz3
 				order.status = "Peyment"
 				order.branch = branch
 				order.customeraddress_id = customer_addres
+				order.customer_id = request.user
 				order.save()
 				return render(request,"success.html")
 			
@@ -323,7 +325,7 @@ def cart(request):# باید بعدا درست شه faz3
 @is_staff_required()
 class BranchUpdate(UpdateView):
     model = Branch
-    template_name = "restaurant/branch_edit.html"
+    template_name = "restaurantPanel/branch_edit.html"
     success_url = reverse_lazy('restaurant_panel')
     fields= "__all__"
 # @is_staff_required()
@@ -333,6 +335,15 @@ class BranchUpdate(UpdateView):
 #     success_url = reverse_lazy('create_menu')
 #     fields = "__all__"
 
+@is_staff_required()
+class MenuUpdate(UpdateView):
+	model = Order
+	template_name = "restaurantPanel/menuupdate.html"
+	success_url = reverse_lazy('restaurant_panel')
+	fields = ["status"]
+
+
+		
 @is_staff_required()
 class MenuCreate(CreateView):
 	model = FoodMenu

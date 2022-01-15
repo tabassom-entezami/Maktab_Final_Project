@@ -76,4 +76,27 @@
     {% endfor %}
 </div>
 <a class="btn btn-dark " name="" href="{% url 'addaddress' %}">add address</a>
+
+<div class="cart-row d-flex">
+        
+    <div class = "col-2"></div>
+    {% comment %} <div  ><img class="row-image" style=" border:10px solid black; height: 100px; width: 100px;" src="{{ item.food_menu_id.food_id.photo.url }}"></div>   {% endcomment %}
+    
+    <div class="col-3"><p>{{item.city}}</p></div>
+    <div class="col-2"><p>{{item.street}}</P></div>
+    <div class="col-1"><p >{{item.plaque}}</p></div>
+    
+    
+  
+    </div>
+
+</div>
+
 {%endblock content%}
+{% block script %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    
+
+{% endblock script %}
+
+
