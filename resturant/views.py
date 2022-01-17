@@ -104,49 +104,7 @@ def get_info_search(req, pk):
 
 
 
-# def sample_django_template(req):
-# 	if req.method == 'POST'  and req.is_ajax():
-# 		print("_________________________-")
-# 		text = req.POST.get('text')
-		
-# 		p = FoodMenu.objects.filter(Q(food_id__name__icontains= text)| Q(branch_id__name__icontains=text ))
-# 		if p in p:
-# 			return JsonResponse({
-# 				'food':p.values_list('name', flat=True),
-# 				'price': p.price,
-# 				"number":p.number,
-# 				'food_id': (p.food_id.name),
-# 				"branch_id":(p.branch_id.name),
-
-# 			})
-# 		else:
-# 			return JsonResponse({
-# 				'food': [],
-# 				'msg' : "doesn't match any files",
-# 			})
-
-# 	return render(req,'search.html',{
-# 		'test' : "test"
-# 	})
-
-
-
-# def main_view(request):
-#       return render(request, 'search.html',{})
-
-# def food_detail_view(request,pk):
-#     obj = Food.objects.get(id = pk)
-#     return render(request,"search.html",{"results":obj})
-
-# def search2(request):
-#     if request.is_ajax() :
-        
-#         game = request.POST.get('search')
-#         qs = FoodMenu.objects.filter(Q(food_id__name__icontains= search)| Q(branch_id__name__icontains=search ))
-#         return render(request,"search.html",{'data':game,'qs':qs})
-#     res = None
-#     return render({res:"nothing found"})
-
+#
 
 # admin
 @superuser_required()

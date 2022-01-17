@@ -9,6 +9,6 @@ urlpatterns = [
     path("logout/", logout_request, name= "logout"),
     path("change_address/<int:pk>/",change_default_address,name="change"),
     path("delete_address/<int:pk>/",delete_address,name="delete_address"),
-
-    
+    path("address_result/", address_result, name="address2"),
+    path("<int:pk>/", get_info_address ,name="get_address") ,
     ]

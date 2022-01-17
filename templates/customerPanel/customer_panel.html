@@ -92,11 +92,146 @@
 
 </div>
 
+
+<table class="table  table-sm text-white p-5"  >
+    <thead>
+    <tr>
+        <th>id</th>
+        <th>city</th>
+        <th>street</th>
+        <th>plaque</th>
+    </tr>
+    </thead>
+    <tbody id="t_body_category" class="text-white" >
+
+    </tbody>
+</table>
+
+
+{% comment %} <form id="login" class="m-5 text-white" >
+    {% csrf_token %}
+    <label for="city" >City:</label><br>
+    <input type="text" id="city" name="city"><br>
+    <label for="street">street:</label><br>
+    <input type="text" id="street" name="street"><br>
+    <label for="plaque">plaque:</label><br>
+    <input type="number" id="plaque" min = "1" name="plaque"><br>
+    <a class="btn btn-primary" id="AddAdress"  >Add Adress</a> {% endcomment %}
+
+    
+  </form><br><br>
+  <form class="m-5 " id="DeleteAdress2" method = "post">
+    {% csrf_token %}
+    <label for="id_delete" >Enter the ID you Want To Delete:</label><br>
+    <input type="number" id="id_delete" name="id_delete"><br>
+    
+    <a class="btn btn-primary" id="DeleteAdress"  >Delete Adress</a>
+
+    
+  </form><br><br>
+
 {%endblock content%}
 {% block script %}
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+<script > 
+    var CSRF_TOKEN = '{{ csrf_token }}';
+    var URL ="{% url 'address2' %}";
+
+  </script>
+
+
+<script>
+
+    window.onload = function (){
     
+    const url=  window.location.href
+    const show_address = document.getElementById("t_body_category")
+    const add_address = document.getElementById("login")
+    const delete_address = document.getElementById('DeleteAdress')
+    
+    const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value
+    
+    
+        
+        $.ajax ({
+            type:'GET',
+            url: URL,
+            data :{
+                'csrfmiddlewaretoken':csrf,
+                
+            },
+            success: function (dataa){
+              
+                var newRows;
+                        for (var i in dataa.dataa) {
+                           
+                            newRows += "<tr ><td>" + dataa.dataa[parseInt(i)].id + "</td>"
+                                newRows += "<td>" + dataa.dataa[parseInt(i)].city + "</td>"
+                                newRows += "<td>" + dataa.dataa[parseInt(i)].street + "</td>"
+                                newRows += "<td>" + dataa.dataa[parseInt(i)].plaque + "</td></tr>"
+                        }
+                        $("#t_body_category").html(newRows);
+              }
+            
+            });
+    
+              
+        
+            document.getElementById("DeleteAdress").addEventListener("click", function() {
+            var id_delete = document.getElementById("id_delete").value;
+            console.log("___________-" , id_delete)
+            $.ajax({
+            type :"POST",
+            dataType : 'json',
+            url :"http://127.0.0.1:8000/accounts/delete_address/"+parseInt(id_delete)+'/',
+            data :{
+                'csrfmiddlewaretoken':document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                
+            },
+            success:function(response){
+
+                $.ajax ({
+            type:'GET',
+            url: URL,
+            data :{
+                'csrfmiddlewaretoken':document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                
+            },
+            success: function (dataa){
+              console.log(dataa)
+              show_address.innerHTML = ''
+                var newRows;
+                        for (var i in dataa.dataa) {
+                           
+                            newRows += "<tr ><td>" + dataa.dataa[parseInt(i)].id + "</td>"
+                                newRows += "<td>" + dataa.dataa[parseInt(i)].city + "</td>"
+                                newRows += "<td>" + dataa.dataa[parseInt(i)].street + "</td>"
+                                newRows += "<td>" + dataa.dataa[parseInt(i)].plaque + "</td></tr>"
+                        }
+                        $("#t_body_category").html(newRows);
+              }
+            
+            });
+            }
+            
+
+
+
+        });
+        })
+        
+    }
+    
+    
+    
+</script>
+        
+
+
+
+
 
 {% endblock script %}
-
-
