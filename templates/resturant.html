@@ -13,7 +13,7 @@
 			
 			
 			<img class="thumbnal " style="height: 200px; width: 200px; padding: 50px; border: 2px solid black;" src="{{ product.food_id.photo.url }}">
-			<div class="box-element product text-white"  >
+			<div class="box-element product text-black "  >
 				<h5><strong>{{product.food_id.name}}</strong></h5>
 				<h4 style="display: block; "><strong>${{product.price}}</strong></h4>
 				<h2 style="display: inline;">from : </h2><a href="{% url 'branches' product.branch_id.id %}"><h4 style="display: inline;">{{product.branch_id.name}}</h4></a>

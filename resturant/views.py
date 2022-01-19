@@ -242,7 +242,7 @@ def cart(request):# باید بعدا درست شه faz3
 				order.status = "Peyment"
 				order.branch = branch
 				order.customeraddress_id = customer_addres
-				order.customer_id = request.user
+				order.customer_id = Customer.objects.get(username = request.user.username)
 				order.save()
 				return render(request,"success.html")
 			

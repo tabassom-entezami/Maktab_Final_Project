@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<body class="bg-black">
+    
+
 <div id="contact_form" class="d-flex justify-content-center">
     <form id="food_form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
@@ -11,4 +14,5 @@
         </div>
         <input id="button" class="sendButton m-5 p-3" type="submit" name="branch_form" value='change'>
     </form>
+</body>
 {% endblock content %}

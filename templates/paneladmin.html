@@ -2,6 +2,8 @@
 
 {% block title %}panel admin{% endblock title %}
 {% block content %}
+<body class="bg-black">
+    
 
     {% for f in foods %}
     <hr>
@@ -30,5 +32,6 @@
  <a href="{% url 'addcategory' %}" class="btn btn-dark">add category</a> 
 {%endif%}
 </div>
+</body>
 {% endblock content %}
 

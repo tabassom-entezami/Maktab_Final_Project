@@ -3,9 +3,9 @@
 {% block content %}      
 
 {% load crispy_forms_tags %}
+<body class="bg-black">
 
-
-<div class="container py-5">
+<div class="container py-5 ">
   <h1>Login</h1>
   <form method="POST">
     {% csrf_token %}
@@ -15,5 +15,5 @@
   </form>
   <p class="text-center">Don't have an account? <a href="{% url 'signup' %}">Create an account</a>.</p>
 </div>
-
+</body>
 {% endblock %}
