@@ -162,7 +162,7 @@ def address_result(req):
 
     if req.is_ajax() and req.method == "POST":
       
-        the_pk = req.POST["id_delete"]
+        the_pk = req.POST.get['data']
         if not(req.user.is_staff):
             if CustomerAdress.objects.filter(address__id = the_pk).values_list("default")[0][0] != True : 
                 address_to_remove = CustomerAdress.objects.get(address__id = the_pk)
@@ -187,7 +187,7 @@ def address_result(req):
 
     return JsonResponse({})
  
-@login_required
+@login_required #محض اطمینان
 def get_info_address(req, pk):
     obj = get_object_or_404(Address, pk=pk)
     return render(req, 'customerPanel/address2.html', {'obj':obj})

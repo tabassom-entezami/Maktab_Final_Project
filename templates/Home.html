@@ -518,10 +518,10 @@ const sendSearchData = (data)=>{
                 data.forEach(food=>{
                     resultBox.innerHTML += `
                     
-                    <a href="${url}${food.pk}" class='item' >
+                    <a href="http://127.0.0.1:8000/product/${food.pk}" class='item' >
                         <div class ="row" style="margin-left:10px">
                             <div class ="col-2>
-                                <p class="text-muted" ><img src="${food.food.img}" class="food-img"> <b style="color:black">${food.food.name}</b><b style="color:#17a2b8"> ${food.branch.name}</b> <b style="color:#6610f2">${food.price} </b></p>
+                                <p class="text-muted" ><img src="${food.food.img}" class="food-img"> <b style="color:black">${food.food.name}</b><b style="color:#17a2b8"> ${food.branch.name}</b> <b style="color:#6610f2">${food.price} </b></p></a>
                                 
                             </div>
                         </div>

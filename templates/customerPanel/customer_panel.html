@@ -94,7 +94,7 @@
 
 
 <table class="table  table-sm text-white p-5"  >
-    <thead>
+    <thead class="p-5">
     <tr>
         <th>id</th>
         <th>city</th>
@@ -144,7 +144,10 @@
 
 
 <script>
-
+    function timedRefresh(timeoutPeriod) {
+        setTimeout("location.reload(true);",timeoutPeriod);
+    }
+    
     window.onload = function (){
     
     const url=  window.location.href
@@ -189,33 +192,38 @@
             url :"http://127.0.0.1:8000/accounts/delete_address/"+parseInt(id_delete)+'/',
             data :{
                 'csrfmiddlewaretoken':document.getElementsByName('csrfmiddlewaretoken')[0].value,
-                
+                'data': id_delete,
             },
             success:function(response){
-
+                window.location.reload();
                 $.ajax ({
-            type:'GET',
-            url: URL,
-            data :{
-                'csrfmiddlewaretoken':document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                type:'GET',
+                url: URL,
+                data :{
+                    'csrfmiddlewaretoken':document.getElementsByName('csrfmiddlewaretoken')[0].value,
+                    
+                },
+                success: function (dataa){
+                    
+                console.log(dataa)
+                $("#t_body_category").innerHTML = ''
                 
-            },
-            success: function (dataa){
-              console.log(dataa)
-              show_address.innerHTML = ''
-                var newRows;
-                        for (var i in dataa.dataa) {
-                           
-                            newRows += "<tr ><td>" + dataa.dataa[parseInt(i)].id + "</td>"
-                                newRows += "<td>" + dataa.dataa[parseInt(i)].city + "</td>"
-                                newRows += "<td>" + dataa.dataa[parseInt(i)].street + "</td>"
-                                newRows += "<td>" + dataa.dataa[parseInt(i)].plaque + "</td></tr>"
-                        }
-                        $("#t_body_category").html(newRows);
-              }
-            
-            });
-            }
+                    var newRows;
+                            for (var i in dataa.dataa) {
+                            
+                                newRows += "<tr ><td>" + dataa.dataa[parseInt(i)].id + "</td>"
+                                    newRows += "<td>" + dataa.dataa[parseInt(i)].city + "</td>"
+                                    newRows += "<td>" + dataa.dataa[parseInt(i)].street + "</td>"
+                                    newRows += "<td>" + dataa.dataa[parseInt(i)].plaque + "</td></tr>"
+                            }
+                            $("#t_body_category").html(newRows);
+                }
+                
+                });
+        },
+        error: function(error){
+            console.log(error)
+        }
             
 
 
