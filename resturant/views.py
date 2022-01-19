@@ -1,3 +1,4 @@
+from typing import Generic
 from django.db import models
 from django.db.models import fields
 from django.db.models.expressions import OrderBy
@@ -37,9 +38,9 @@ def home_page(re):
 	best_foods = dict(sorted(my_dict.items(), key=lambda item: item[1]))
 
 
-	values = Food.objects.all().filter(food__foodmenu__order_id__status = "Peyment").annotate(our_sum=Sum("food__foodmenu__number")).order_by("-our_sum")[:5]
+	values = Food.objects.all().exclude(food__foodmenu__order_id__status = "Order").annotate(our_sum=Sum("food__foodmenu__number")).order_by("-our_sum")[:5]
 
-	best_branchs = Branch.objects.filter(foods__food__foodmenu__order_id__status='Peyment').annotate(sums =Sum("foods__food__foodmenu__order_id__total_price") ).order_by("-sums")[:5]
+	best_branchs = Branch.objects.exclude(foods__food__foodmenu__order_id__status='Order').annotate(sums =Sum("foods__food__foodmenu__order_id__total_price") ).order_by("-sums")[:5]
 
 	context = {'products':products,"way2":best_foods,"best_foods":values,"best_branchs":best_branchs,"branches":branches}
 
@@ -76,16 +77,14 @@ def search_result(req):
 		
 		res = None
 		result = req.POST.get('data')
-		# | Q(branch__restaurant__name__icontains=result)
-		# 'branch':i.branch.restaurant
 		q = FoodMenu.objects.filter(Q(food_id__name__icontains= result)| Q(branch_id__name__icontains= result))
-		if len(q) > 0 and len(result) > 0:
+		if len(q)  and len(result) :
 			data =[]
 			for i in q:
 				item ={
-					'pk' : i.pk,
+					'pk' : i.id,
 					'food':{'name':i.food_id.name, 'img':i.food_id.photo.url},
-					'branch': {'name':i.branch_id.name, },
+					'branch': {'name':i.branch_id.name },
 					'price': i.price,
 					'inventory': i.number
 				}
@@ -98,56 +97,14 @@ def search_result(req):
 	return JsonResponse({})
 
 
-
+# محض اطمینان
 def get_info_search(req, pk):
     obj = get_object_or_404(FoodMenu, pk=pk)
     return render(req, 'search.html', {'obj':obj})
 
 
 
-# def sample_django_template(req):
-# 	if req.method == 'POST'  and req.is_ajax():
-# 		print("_________________________-")
-# 		text = req.POST.get('text')
-		
-# 		p = FoodMenu.objects.filter(Q(food_id__name__icontains= text)| Q(branch_id__name__icontains=text ))
-# 		if p in p:
-# 			return JsonResponse({
-# 				'food':p.values_list('name', flat=True),
-# 				'price': p.price,
-# 				"number":p.number,
-# 				'food_id': (p.food_id.name),
-# 				"branch_id":(p.branch_id.name),
-
-# 			})
-# 		else:
-# 			return JsonResponse({
-# 				'food': [],
-# 				'msg' : "doesn't match any files",
-# 			})
-
-# 	return render(req,'search.html',{
-# 		'test' : "test"
-# 	})
-
-
-
-# def main_view(request):
-#       return render(request, 'search.html',{})
-
-# def food_detail_view(request,pk):
-#     obj = Food.objects.get(id = pk)
-#     return render(request,"search.html",{"results":obj})
-
-# def search2(request):
-#     if request.is_ajax() :
-        
-#         game = request.POST.get('search')
-#         qs = FoodMenu.objects.filter(Q(food_id__name__icontains= search)| Q(branch_id__name__icontains=search ))
-#         return render(request,"search.html",{'data':game,'qs':qs})
-#     res = None
-#     return render({res:"nothing found"})
-
+#
 
 # admin
 @superuser_required()
@@ -285,6 +242,7 @@ def cart(request):# باید بعدا درست شه faz3
 				order.status = "Peyment"
 				order.branch = branch
 				order.customeraddress_id = customer_addres
+				order.customer_id = request.user
 				order.save()
 				return render(request,"success.html")
 			
@@ -325,7 +283,7 @@ def cart(request):# باید بعدا درست شه faz3
 @is_staff_required()
 class BranchUpdate(UpdateView):
     model = Branch
-    template_name = "restaurant/branch_edit.html"
+    template_name = "restaurantPanel/branch_edit.html"
     success_url = reverse_lazy('restaurant_panel')
     fields= "__all__"
 # @is_staff_required()
@@ -335,6 +293,15 @@ class BranchUpdate(UpdateView):
 #     success_url = reverse_lazy('create_menu')
 #     fields = "__all__"
 
+@is_staff_required()
+class MenuStatusUpdate(UpdateView):
+	model = Order
+	template_name = "resturantPanel/menuupdate.html"
+	success_url = reverse_lazy('restaurant_panel')
+	fields = ["status"]
+
+
+		
 @is_staff_required()
 class MenuCreate(CreateView):
 	model = FoodMenu

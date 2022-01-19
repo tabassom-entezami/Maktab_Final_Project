@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<body class="bg_white">
+  
+
 <div class="container">
     {% if msg %}
           <h1>{{msg}}</h1>
@@ -35,4 +38,5 @@
         <button class="btn btn-dark" type="submit">Submit form</button>
       </form>
 </div>
+</body>
 {% endblock content %}

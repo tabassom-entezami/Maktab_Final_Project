@@ -27,7 +27,7 @@
  <link href="{% static 'assets/css/search.css' %}" rel="stylesheet">
  <!-- Template Main CSS File -->
  <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
- <link href="{% static 'assets/css/search2.css' %}" rel="stylesheet">
+ 
 
  <style>
 
@@ -62,13 +62,14 @@
 {% endblock css %}
 
 {% block content %}
-{% comment %} <div class="w-10 text-center">
+<body>
+ <div class="w-10 text-center">
 	<form id="search-form" autocomplete='off' style="margin-top: 10px;">
 		{% csrf_token %}
 		<input type="text" id='search-input' class='p-1 w-50 search' placeholder="search">
 	</form>	
 <div id="result-box" class="result-card not-visible" style="width: 50%;max-height:none;"></div>
- {% endcomment %}
+
 
 <section id="hero" class="d-flex align-items-center">
     <div class="container position-relative text-center text-lg-start"  >
@@ -463,7 +464,7 @@
 
 <!-- End #main -->
 
-  
+</body>
 
 
 
@@ -478,12 +479,13 @@
     <script src="{% static 'assets/vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
     <script src="{% static 'assets/vendor/swiper/swiper-bundle.min.js' %}"></script>
     <script src="{% static 'assets/vendor/php-email-form/validate.js' %}"></script>
-
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <!-- Template Main JS File -->
     <script src="{% static 'assets/js/main.js' %}"></script>
   
   <script > 
-    var URL ="{% url 'search' %}"
+    var CSRF_TOKEN = '{{ csrf_token }}';
+    var URL ="{% url 'search2' %}";
 
   </script>
     
@@ -511,17 +513,16 @@ const sendSearchData = (data)=>{
             
             const data = res.dataa
             if (Array.isArray(data)){
-              console.log("_________________")
+              
                 resultBox.innerHTML = ''
                 data.forEach(food=>{
                     resultBox.innerHTML += `
                     
-                    <a href="${url}${food.pk}" class='item' >
+                    <a href="http://127.0.0.1:8000/product/${food.pk}" class='item' >
                         <div class ="row" style="margin-left:10px">
                             <div class ="col-2>
-                                <p class="text-muted" ><img src="${food.food.img}" class="food-img"> <b style="color:black">
-                                  ${food.food.food_name}</b><b style="color:#17a2b8"> ${food.menu.name}</b> <b style="color:#6610f2">
-                                    ${food.price} </b></p>
+                                <p class="text-muted" ><img src="${food.food.img}" class="food-img"> <b style="color:black">${food.food.name}</b><b style="color:#17a2b8"> ${food.branch.name}</b> <b style="color:#6610f2">${food.price} </b></p></a>
+                                
                             </div>
                         </div>
                     </a>

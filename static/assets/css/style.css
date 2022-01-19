@@ -10,7 +10,7 @@
 --------------------------------------------------------------*/
 body {
   font-family: "Open Sans", sans-serif;
-  background: #25221c;
+  background: #413e3815;
   color: #fff;
 }
 
@@ -97,7 +97,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .back-to-top:hover {
   background: #cda45e;
-  color: #1a1814;
+  color: #36342f1c;
 }
 .back-to-top:hover i {
   color: #444444;
@@ -169,7 +169,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 #header.header-scrolled {
   top: 0;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(82, 80, 80, 0.082);
   border-bottom: 1px solid #37332a;
 }
 #header .logo {
@@ -333,7 +333,7 @@ h1, h2, h3, h4, h5, h6 {
   right: 0;
   left: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(51, 49, 49, 0.137);
   transition: 0.3s;
   z-index: 999;
 }
@@ -406,7 +406,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 #hero:before {
   content: "";
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(39, 38, 38, 0.219);
   position: absolute;
   bottom: 0;
   top: 0;
@@ -586,7 +586,7 @@ section {
 }
 
 .section-bg {
-  background-color: #1a1814;
+  background-color: #1a18143d;
 }
 
 .section-title {
@@ -625,7 +625,7 @@ section {
 --------------------------------------------------------------*/
 .breadcrumbs {
   padding: 15px 0;
-  background: #1d1b16;
+  background: #1d1b164b;
   margin-top: 110px;
 }
 @media (max-width: 992px) {
@@ -677,7 +677,7 @@ section {
 }
 .about:before {
   content: "";
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(36, 35, 35, 0.281);
   position: absolute;
   bottom: 0;
   top: 0;

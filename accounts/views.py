@@ -1,4 +1,5 @@
 
+from pyexpat import model
 from django.urls import reverse_lazy 
 from django.views import generic
 from .forms import *
@@ -13,7 +14,9 @@ from django.contrib import messages
 from resturant.models import *
 from resturant.decorators import *
 from django.contrib.auth.decorators import login_required 
-
+from rest_framework.response import Response
+from django.http import JsonResponse, request
+from django.shortcuts import get_object_or_404
 
 def login_request(request):
     if request.method == "POST":
@@ -69,7 +72,7 @@ def sign_up_manager_view (request):
     return render(request , "registration/signupmanager.html" , {"form":form})
 
 
-class LoginView(generic.CreateView): 
+class LoginView(CreateView): 
     form_class = CostumRegisterForm 
     success_url = reverse_lazy('Home') 
     template_name = 'registration/login.html'
@@ -92,7 +95,7 @@ def address_create(request):
             customeraddress = CustomerAdress.objects.create(customer = customer , address = address,default=True)
         else:
             customeraddress = CustomerAdress.objects.create(customer = customer , address = address,default=False)
-        return redirect("cart")
+        return redirect("customer_panel")
     return render(request , "address.html")
 
 
@@ -135,4 +138,57 @@ def change_default_address(request,pk):
         return render(request,"customerPanel/customer_panel.html",{"msg":"you are not a customer"})
 
 
+@login_required
+def address_result(req):
+    if req.is_ajax() and req.method == "GET":
+
+        res = None
         
+        q = Address.objects.filter(customer_address__customer__username = req.user.username )
+        if len(q)  :
+            data =[]
+            for i in q:
+                item ={
+                    'id' : i.id,
+                    'plaque': i.plaque,
+                    'street': i.street,
+                    'city': i.city,
+                    
+                }
+                data.append(item)
+            res = data
+
+        return JsonResponse({'dataa':res})
+
+    if req.is_ajax() and req.method == "POST":
+      
+        the_pk = req.POST.get['data']
+        if not(req.user.is_staff):
+            if CustomerAdress.objects.filter(address__id = the_pk).values_list("default")[0][0] != True : 
+                address_to_remove = CustomerAdress.objects.get(address__id = the_pk)
+                address_to_remove.delete()
+        res = None
+        
+        q = Address.objects.filter(customer_address__customer__username = req.user.username )
+        if len(q)  :
+            data =[]
+            for i in q:
+                item ={
+                    'id' : i.id,
+                    'plaque': i.plaque,
+                    'street': i.street,
+                    'city': i.city,
+                    
+                }
+                data.append(item)
+            res = data
+
+        return JsonResponse({'dataa':res})              
+
+    return JsonResponse({})
+ 
+@login_required #محض اطمینان
+def get_info_address(req, pk):
+    obj = get_object_or_404(Address, pk=pk)
+    return render(req, 'customerPanel/address2.html', {'obj':obj})
+
