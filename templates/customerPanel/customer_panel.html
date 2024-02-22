@@ -4,8 +4,10 @@
 
 
 {% load static %}
+<body class="bg-black">
+
 {% if msg %}
-    <h1>{{msg}}</h1>
+    <h1 >{{msg}}</h1>
 {% endif %}
 <section>
     
@@ -129,7 +131,7 @@
 
     
   </form><br><br>
-
+</body>
 {%endblock content%}
 {% block script %}
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>

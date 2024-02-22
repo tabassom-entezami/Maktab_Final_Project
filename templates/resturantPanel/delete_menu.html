@@ -1,10 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<body class="bg-black">
+    
+
 <div id="contact_form" class="m-5">
     <form id="food_form" method="POST" enctype="multipart/form-data" class="text-white container">
         {% csrf_token %}
         <h3>Are you sure you want to delete this Menu?</h3>
         <input id="button" class="sendButton m-5 p-3" type="submit" value='Delete Menu'>
     </form>
+
+</body>
 {% endblock content %}

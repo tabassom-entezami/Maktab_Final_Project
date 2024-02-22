@@ -31,7 +31,9 @@
 		<h2 name = "price" id = "price">Price: ${{product.price}}</h2>
 		<h4>{{food.discreption}}</h4>
 		<hr>
+		<a href="{% url 'branches' product.branch_id.id %}"> see more from this branch</a>
 	</div>
 </div>
+
 
 {% endblock content %}
